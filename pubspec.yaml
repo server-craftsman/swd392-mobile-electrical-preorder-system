@@ -39,6 +39,8 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  flutter_launcher_icons: ^0.14.3
+  rename: ^3.0.2
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +69,13 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/animations/
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo.jpg" # Đường dẫn đến file icon
+  adaptive_icon_background: "#ffffff" # Nền cho icon Android adaptive (tuỳ chọn)
+  adaptive_icon_foreground: "assets/images/logo.jpg" # Foreground icon Android adaptive (tuỳ chọn)
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

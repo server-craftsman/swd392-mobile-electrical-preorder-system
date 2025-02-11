@@ -1,4 +1,4 @@
-package com.example.mobile_electrical_preorder_system
+package com.swd.elecee
 
 import io.flutter.embedding.android.FlutterActivity
 
