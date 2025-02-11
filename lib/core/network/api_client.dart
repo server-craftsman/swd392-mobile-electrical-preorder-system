@@ -7,6 +7,10 @@ class ApiClient {
       baseUrl: 'http://localhost:8080/api/v1',
       connectTimeout: Duration(seconds: 10),
       receiveTimeout: Duration(seconds: 10),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
     ),
   );
 
@@ -14,7 +18,7 @@ class ApiClient {
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
         // Thêm token vào header
-        options.headers["Authorization"] = "Bearer YOUR_ACCESS_TOKEN";
+        options.headers["Authorization"] = "Bearer Huy";
         return handler.next(options);
       },
       onResponse: (response, handler) {

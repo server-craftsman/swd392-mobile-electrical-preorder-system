@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainLayout extends StatefulWidget {
   final Widget child;
@@ -11,11 +13,41 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
 
-  void _onItemTapped(int index) {
+  @override
+  void initState() {
+    super.initState();
+    _loadSelectedIndex();
+  }
+
+  Future<void> _loadSelectedIndex() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedIndex = prefs.getInt('selectedIndex') ?? 0;
+    });
+  }
+
+  void _onItemTapped(int index) async {
     setState(() {
       _selectedIndex = index;
     });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('selectedIndex', index);
+
     // Handle navigation to different pages based on index
+    switch (index) {
+      case 0:
+        Helper.navigateTo(context, '/');
+        break;
+      case 1:
+        Helper.navigateTo(context, '/categories');
+        break;
+      case 2:
+        Helper.navigateTo(context, '/favorites');
+        break;
+      case 3:
+        Helper.navigateTo(context, '/profile');
+        break;
+    }
   }
 
   @override
