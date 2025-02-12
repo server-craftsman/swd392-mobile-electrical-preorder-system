@@ -54,11 +54,28 @@ class CategoryPage extends StatelessWidget {
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CategoryIcon(label: 'Phones', icon: Icons.phone_android),
-                  CategoryIcon(label: 'Computer', icon: Icons.computer),
-                  CategoryIcon(label: 'Health', icon: Icons.health_and_safety),
-                  CategoryIcon(label: 'Books', icon: Icons.book),
+                  CategoryIcon(
+                    label: 'Phones',
+                    icon: Icons.phone_android,
+                    backgroundColor: Colors.blueAccent,
+                  ),
+                  CategoryIcon(
+                    label: 'Computer',
+                    icon: Icons.computer,
+                    backgroundColor: Colors.greenAccent,
+                  ),
+                  CategoryIcon(
+                    label: 'Health',
+                    icon: Icons.health_and_safety,
+                    backgroundColor: Colors.orangeAccent,
+                  ),
+                  CategoryIcon(
+                    label: 'Books',
+                    icon: Icons.book,
+                    backgroundColor: Colors.purpleAccent,
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -118,8 +135,13 @@ class CategoryPage extends StatelessWidget {
 class CategoryIcon extends StatelessWidget {
   final String label;
   final IconData icon;
+  final Color backgroundColor;
 
-  const CategoryIcon({required this.label, required this.icon, super.key});
+  const CategoryIcon(
+      {required this.label,
+      required this.icon,
+      required this.backgroundColor,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +149,7 @@ class CategoryIcon extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 30,
-          backgroundColor: Colors.redAccent,
+          backgroundColor: backgroundColor,
           child: Icon(icon, size: 30, color: Colors.white),
         ),
         const SizedBox(height: 8),
@@ -210,42 +232,55 @@ class BestSellerGrid extends StatelessWidget {
             shrinkWrap: true,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 1 / 1.2, // Adjusted aspect ratio
+              childAspectRatio: 1 / 1.2,
               crossAxisSpacing: 8,
               mainAxisSpacing: 8,
-              // mainAxisExtent: 100,
             ),
             itemCount: 4,
             itemBuilder: (context, index) {
               return Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                elevation: 5,
+                shadowColor: Colors.black54,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
-                      // Added Expanded to prevent overflow
-                      child: Image.network(
-                        'https://res.cloudinary.com/dsqbxgh88/image/upload/v1733295021/FB_IMG_1688794831597_mwxc4l.jpg',
-                        fit: BoxFit.cover,
-                        width: double.infinity, // Ensure image takes full width
+                      child: ClipRRect(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(15)),
+                        child: Image.network(
+                          'https://res.cloudinary.com/dsqbxgh88/image/upload/v1733295021/FB_IMG_1688794831597_mwxc4l.jpg',
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(1),
+                      padding: const EdgeInsets.all(8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const [
-                          Text('Phạm Thị Thắm',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                  overflow: TextOverflow.ellipsis)),
-                          Text('Em là vô giá!',
-                              style: TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold)),
+                          Text(
+                            'Phạm Thị Thắm',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Text(
+                            'Em là vô giá!',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ],
                       ),
                     ),
