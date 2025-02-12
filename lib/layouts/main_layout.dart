@@ -39,10 +39,10 @@ class _MainLayoutState extends State<MainLayout> {
         Helper.navigateTo(context, '/');
         break;
       case 1:
-        Helper.navigateTo(context, '/categories');
+        Helper.navigateTo(context, '/category');
         break;
       case 2:
-        Helper.navigateTo(context, '/favorites');
+        Helper.navigateTo(context, '/favorite');
         break;
       case 3:
         Helper.navigateTo(context, '/profile');
