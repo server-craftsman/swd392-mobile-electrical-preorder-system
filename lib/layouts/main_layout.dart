@@ -33,7 +33,7 @@ class _MainLayoutState extends State<MainLayout> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('selectedIndex', index);
 
-    // Handle navigation to different pages based on index
+    // Xử lý điều hướng đến các trang khác nhau dựa trên chỉ số
     switch (index) {
       case 0:
         Helper.navigateTo(context, '/');
@@ -99,19 +99,19 @@ class _MainLayoutState extends State<MainLayout> {
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.home, size: 30),
-                label: 'Home',
+                label: 'Trang chủ',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.grid_view, size: 30),
-                label: 'Categories',
+                label: 'Danh mục',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.favorite, size: 30),
-                label: 'Favorites',
+                label: 'Yêu thích',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person, size: 30),
-                label: 'Profile',
+                label: 'Hồ sơ',
               ),
             ],
             currentIndex: _selectedIndex,
