@@ -151,12 +151,20 @@ class _HomePageState extends State<HomePage> {
         FutureBuilder<List<Category>>(
           future: _categoriesFuture,
           builder: (context, snapshot) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: snapshot.data!.map((category) {
-                return _buildCategoryIcon(Icons.category, category.name);
-              }).toList(),
-            );
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('No categories available'));
+            } else {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: snapshot.data!.map((category) {
+                  return _buildCategoryIcon(Icons.category, category.name);
+                }).toList(),
+              );
+            }
           },
         ),
       ],
