@@ -12,7 +12,7 @@ android {
             def versionName = variant.versionName
             def versionCode = variant.versionCode
             def timeStamp = new Date().format("yyyyMMdd_HHmmss") // Get the current timestamp
-            def fileName = "${appName}_v${versionName}(${versionCode})_${timeStamp}.apk"
+            def fileName = "${appName}_v${versionName}_${timeStamp}.apk"
             
             outputFileName = fileName  // Set the custom file name for the APK
         }
