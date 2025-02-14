@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/network/category/category_network.dart';
+import 'package:mobile_electrical_preorder_system/core/network/category/category_model.dart';
+import 'package:mobile_electrical_preorder_system/core/network/category/category_response.dart';
 
 class CategoryList extends StatefulWidget {
   @override
@@ -7,7 +9,7 @@ class CategoryList extends StatefulWidget {
 }
 
 class _CategoryListState extends State<CategoryList> {
-  Future<List<dynamic>> _fetchCategories() async {
+  Future<List<Category>> _fetchCategories() async {
     try {
       final fetchedCategories = await CategoryNetwork().getCategories();
       return fetchedCategories.data;
@@ -19,32 +21,31 @@ class _CategoryListState extends State<CategoryList> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<dynamic>>(
+    return FutureBuilder<List<Category>>(
       future: _fetchCategories(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
-        } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: snapshot.data!.map((category) {
-              return _buildCategoryIcon(Icons.category, category,
-                  color: Colors.blueAccent);
-            }).toList(),
-          );
         } else {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildCategoryIcon(Icons.phone_android, 'Điện thoại',
-                  color: Colors.redAccent),
-              _buildCategoryIcon(Icons.laptop, 'Laptop',
-                  color: Colors.blueAccent),
-              _buildCategoryIcon(Icons.watch, 'Đồng hồ',
-                  color: Colors.greenAccent),
-            ],
+            children: snapshot.data!.isNotEmpty
+                ? snapshot.data!.map((category) {
+                    return _buildCategoryIcon(Icons.category, category.name,
+                        color: Colors.blueAccent);
+                  }).toList()
+                :
+                // [
+                //     _buildCategoryIcon(Icons.phone_android, 'Điện thoại',
+                //         color: Colors.redAccent),
+                //     _buildCategoryIcon(Icons.laptop, 'Laptop',
+                //         color: Colors.blueAccent),
+                //     _buildCategoryIcon(Icons.watch, 'Đồng hồ',
+                //         color: Colors.greenAccent),
+                //   ],
+                [Text('No categories found')],
           );
         }
       },
