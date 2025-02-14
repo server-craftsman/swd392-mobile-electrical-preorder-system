@@ -1,0 +1,2 @@
+D:/CN7/SWD392/mobile_electrical_preorder_system/android/app/.cxx/Debug/6q41224h/arm64-v8a/CMakeFiles/edit_cache.dir
+D:/CN7/SWD392/mobile_electrical_preorder_system/android/app/.cxx/Debug/6q41224h/arm64-v8a/CMakeFiles/rebuild_cache.dir

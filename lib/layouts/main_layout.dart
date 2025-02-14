@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mobile_electrical_preorder_system/features/settings/index.dart';
 
 class MainLayout extends StatefulWidget {
   final Widget child;
@@ -10,30 +11,42 @@ class MainLayout extends StatefulWidget {
   _MainLayoutState createState() => _MainLayoutState();
 }
 
-class _MainLayoutState extends State<MainLayout> {
+class _MainLayoutState extends State<MainLayout> with WidgetsBindingObserver {
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadSelectedIndex();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    // Ensure any other resources are disposed of here
+    super.dispose();
   }
 
   Future<void> _loadSelectedIndex() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _selectedIndex = prefs.getInt('selectedIndex') ?? 0;
-    });
+    if (mounted) {
+      setState(() {
+        _selectedIndex = prefs.getInt('selectedIndex') ?? 0;
+      });
+    }
   }
 
   void _onItemTapped(int index) async {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (mounted) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('selectedIndex', index);
 
-    // Xử lý điều hướng đến các trang khác nhau dựa trên chỉ số
+    // Handle navigation to different pages based on the index
     switch (index) {
       case 0:
         Helper.navigateTo(context, '/');
@@ -78,12 +91,16 @@ class _MainLayoutState extends State<MainLayout> {
           IconButton(
               icon: const Icon(Icons.notifications, color: Colors.black),
               onPressed: () {}),
-          IconButton(
-            icon: const Icon(Icons.settings, color: Colors.black),
-            onPressed: () {},
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.settings, color: Colors.black),
+          //   onPressed: () {
+          //     Helper.navigateWithAnimation(context, '/setting');
+          //     Navigator.pop(context);
+          //   },
+          // ),
         ],
       ),
+      drawer: SettingsDrawer(),
       body: Stack(
         children: [
           widget.child,

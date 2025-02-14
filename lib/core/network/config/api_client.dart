@@ -14,18 +14,30 @@ class ApiClient {
     ),
   );
 
-  ApiClient() {
+  String? _accessToken;
+
+  ApiClient();
+
+  void setAccessToken(String token) {
+    _accessToken = token;
+  }
+
+  void _addAuthorizationHeader(RequestOptions options) {
+    if (_accessToken != null) {
+      options.headers["Authorization"] = "Bearer $_accessToken";
+    }
+  }
+
+  void setupInterceptors() {
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
-        // Thêm token vào header
-        options.headers["Authorization"] = "Bearer Huy";
+        _addAuthorizationHeader(options);
         return handler.next(options);
       },
       onResponse: (response, handler) {
         return handler.next(response);
       },
       onError: (DioException e, handler) {
-        // Xử lý lỗi API
         String errorDescription = "";
         switch (e.type) {
           case DioExceptionType.cancel:
