@@ -16,7 +16,7 @@ List<GoRoute> publicRoutes = createPublicRoutes([
 ]);
 
 List<GoRoute> firstRoutes = createFirstRoutes([
-  {'path': '/', 'page': WelcomePage()},
+  {'path': '/', 'page': CustomWelcomePage()},
 ]);
 
 List<GoRoute> nullRoutes = createNullRoutes([

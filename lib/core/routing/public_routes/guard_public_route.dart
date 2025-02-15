@@ -21,6 +21,6 @@ GoRoute nullGuardRoute(String path, Widget child) {
 GoRoute firstGuardRoute(String path, Widget child) {
   return GoRoute(
     path: path,
-    builder: (context, state) => WelcomePage(),
+    builder: (context, state) => CustomWelcomePage(),
   );
 }
