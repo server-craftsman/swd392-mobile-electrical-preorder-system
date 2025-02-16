@@ -1,0 +1,80 @@
+buildscript {
+    ext.kotlin_version = '1.9.0'
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+android {
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def appName = "Elecee"  // Set the base name for the APK
+            def versionName = variant.versionName
+            def versionCode = variant.versionCode
+            def timeStamp = new Date().format("yyyyMMdd_HHmmss") // Get the current timestamp
+            def fileName = "${appName}_v${versionName}_${timeStamp}.apk"
+            
+            outputFileName = fileName  // Set the custom file name for the APK
+        }
+    }
+
+    namespace = "com.swd392.elecee"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId = "com.swd392.elecee"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = 1
+        versionName = "1.0.2"
+        // minSdkVersion 21
+        // targetSdkVersion 34
+        // versionCode 1
+        // versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig = signingConfigs.debug
+        }
+    }
+
+    
+}
+
+flutter {
+    source = "../.."
+}
+
+afterEvaluate {
+    tasks.whenTaskAdded { task ->
+        if (task.name == 'assembleRelease') {
+            task.finalizedBy('renameApk')
+        }
+    }
+}
+
+task renameApk(type: Exec) {
+    commandLine 'bash', './rename_apk.sh'  // Use 'cmd', '/c', 'rename_apk.bat' for Windows
+}

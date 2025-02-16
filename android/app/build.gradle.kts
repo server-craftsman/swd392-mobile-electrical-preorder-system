@@ -5,6 +5,9 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+import java.text.SimpleDateFormat
+import java.util.Date
+
 android {
     namespace = "com.swd392.elecee"
     compileSdk = flutter.compileSdkVersion
@@ -30,6 +33,7 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
+
 
     buildTypes {
         release {
