@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/network/category/category_network.dart';
-import 'UserProfile.dart';
+// import 'UserProfile.dart';
 import 'SearchBar.dart';
 import 'ImageCarousels.dart';
 import 'CategoryList.dart';
@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          UserProfile(),
+          // UserProfile(),
           const SizedBox(height: 20),
           const CustomSearchBar(),
           const SizedBox(height: 20),
@@ -52,20 +52,14 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 20),
                   Text(
                     'Danh mục',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
                   CategoryList(),
                   const SizedBox(height: 20),
                   Text(
                     'Đơn hàng trước đây',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
                   OrderHistory(),

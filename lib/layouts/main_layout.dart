@@ -67,45 +67,43 @@ class _MainLayoutState extends State<MainLayout> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: RichText(
-          text: TextSpan(
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Elec',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                color: Colors.black,
+              ),
             ),
-            children: [
-              TextSpan(
-                text: 'Elec',
-                style: TextStyle(color: Colors.black),
+            Text(
+              'ee',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                color: Colors.red,
               ),
-              TextSpan(
-                text: 'ee',
-                style: TextStyle(color: Colors.red),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-              icon: const Icon(Icons.notifications, color: Colors.black),
-              onPressed: () {}),
-          // IconButton(
-          //   icon: const Icon(Icons.settings, color: Colors.black),
-          //   onPressed: () {
-          //     Helper.navigateWithAnimation(context, '/setting');
-          //     Navigator.pop(context);
-          //   },
-          // ),
+            icon: const Icon(
+              Icons.notifications,
+              color: Colors.black,
+              size: 30,
+            ),
+            padding: EdgeInsets.only(right: 25.0),
+            onPressed: () {},
+          ),
         ],
       ),
       drawer: SettingsDrawer(),
-      body: Stack(
-        children: [
-          widget.child,
-        ],
-      ),
+      body: Stack(children: [widget.child]),
       bottomNavigationBar: Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -165,8 +163,10 @@ class _MainLayoutState extends State<MainLayout> with WidgetsBindingObserver {
             FloatingActionButton(
               onPressed: () {},
               backgroundColor: const Color.fromARGB(255, 248, 147, 147),
-              child: const Icon(Icons.shopping_cart,
-                  color: Color.fromARGB(255, 255, 255, 255)),
+              child: const Icon(
+                Icons.shopping_cart,
+                color: Color.fromARGB(255, 255, 255, 255),
+              ),
             ),
             Positioned(
               right: 0,
@@ -177,16 +177,10 @@ class _MainLayoutState extends State<MainLayout> with WidgetsBindingObserver {
                   color: Colors.red,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                constraints: BoxConstraints(
-                  minWidth: 20,
-                  minHeight: 20,
-                ),
+                constraints: BoxConstraints(minWidth: 20, minHeight: 20),
                 child: Text(
                   '1',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 12),
                   textAlign: TextAlign.center,
                 ),
               ),

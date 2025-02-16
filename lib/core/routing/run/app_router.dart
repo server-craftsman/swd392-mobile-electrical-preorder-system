@@ -8,8 +8,9 @@ class AppRouter {
     routes: [
       ...firstRoutes,
       ...nullRoutes,
+      ...adminRoutes,
       ...publicRoutes,
-      ...protectedRoutes(),
+      // ...protectedRoutes(),
     ],
   );
 }

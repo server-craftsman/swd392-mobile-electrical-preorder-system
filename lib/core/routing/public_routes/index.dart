@@ -7,12 +7,16 @@ import 'package:mobile_electrical_preorder_system/features/category/category_pag
 import 'package:mobile_electrical_preorder_system/features/settings/index.dart';
 import 'run_guard.dart';
 import 'package:mobile_electrical_preorder_system/features/first/index.dart';
+import 'package:mobile_electrical_preorder_system/features/auth/sign_up_page.dart';
+
+//admin
+import 'package:mobile_electrical_preorder_system/features/admin/overview/index.dart';
+import 'package:mobile_electrical_preorder_system/features/admin/campaign/index.dart';
 
 List<GoRoute> publicRoutes = createPublicRoutes([
   {'path': '/home', 'page': HomePage()},
   {'path': '/profile', 'page': ProfilePage()},
   {'path': '/category', 'page': CategoryPage()},
-  {'path': '/setting', 'page': SettingsDrawer()},
 ]);
 
 List<GoRoute> firstRoutes = createFirstRoutes([
@@ -21,4 +25,14 @@ List<GoRoute> firstRoutes = createFirstRoutes([
 
 List<GoRoute> nullRoutes = createNullRoutes([
   {'path': '/login', 'page': LoginPage()},
+  {'path': '/signup', 'page': SignUpPage()},
+  {'path': '/setting', 'page': SettingsDrawer()},
+]);
+
+List<GoRoute> adminRoutes = createAdminRoutes([
+  {'path': '/admin/dashboard', 'page': DashboardPage()},
+  {'path': '/admin/campaigns', 'page': CampaignListScreen()},
+  // {'path': '/admin/users', 'page': AdminUsers()},
+  // {'path': '/admin/orders', 'page': AdminOrders()},
+  // {'path': '/admin/settings', 'page': AdminSettings()},
 ]);

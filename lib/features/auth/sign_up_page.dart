@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
 
-class LoginPage extends StatelessWidget {
+class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,7 +9,7 @@ class LoginPage extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.grey),
           onPressed: () {
-            Helper.navigateTo(context, '/');
+            Navigator.pop(context);
           },
         ),
         title: Row(
@@ -27,7 +27,7 @@ class LoginPage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.more_horiz_outlined, color: Colors.grey),
             onPressed: () {
-              Helper.navigateTo(context, '/setting');
+              // Add action here
             },
           ),
         ],
@@ -40,68 +40,47 @@ class LoginPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Đăng nhập',
+              'Tạo tài khoản',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 32),
-            _buildConstrainedTextField('Email', 'Nhập email của bạn'),
+            _buildTextField('Họ và tên', 'Nhập họ và tên của bạn'),
             SizedBox(height: 16),
-            _buildConstrainedTextField(
-              'Mật khẩu',
-              'Nhập mật khẩu của bạn',
-              obscureText: true,
-            ),
+            _buildTextField('Email', 'Nhập email của bạn'),
             SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Checkbox(value: false, onChanged: (value) {}),
-                    Text('Remember me'),
-                  ],
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Text(
-                    'Khôi phục mật khẩu',
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ),
-              ],
-            ),
+            _buildTextField('Mật khẩu', 'Tạo mật khẩu', obscureText: true),
             SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Helper.navigateTo(context, '/admin/dashboard');
+                  Helper.navigateTo(context, '/home');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
-                  padding: EdgeInsets.symmetric(vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 ),
                 child: Text(
-                  'Đăng nhập',
+                  'Đăng ký',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
             ),
             SizedBox(height: 16),
-            Text('Đăng nhập với tài khoản mạng xã hội'),
+            Text('Đăng ký với tài khoản mạng xã hội'),
             SizedBox(height: 16),
             _buildSocialIcons(),
             SizedBox(height: 32),
             GestureDetector(
               onTap: () {
-                Helper.navigateTo(context, '/signup');
+                Helper.navigateTo(context, '/login');
               },
               child: Text.rich(
                 TextSpan(
-                  text: 'Bạn chưa có tài khoản? ',
+                  text: 'Đã có tài khoản? ',
                   children: [
                     TextSpan(
-                      text: 'Đăng ký tài khoản',
+                      text: 'Đăng nhập ở đây',
                       style: TextStyle(color: Colors.blue),
                     ),
                   ],
@@ -114,20 +93,17 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _buildConstrainedTextField(
+  Widget _buildTextField(
     String label,
     String hint, {
     bool obscureText = false,
   }) {
-    return SizedBox(
-      width: double.infinity,
-      child: TextField(
-        obscureText: obscureText,
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: hint,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        ),
+    return TextField(
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
