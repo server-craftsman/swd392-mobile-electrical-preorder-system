@@ -9,7 +9,7 @@ class SignUpPage extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.grey),
           onPressed: () {
-            Navigator.pop(context);
+            Helper.navigateTo(context, '/login');
           },
         ),
         title: Row(
