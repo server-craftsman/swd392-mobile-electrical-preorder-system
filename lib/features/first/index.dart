@@ -1,9 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
 
-class CustomWelcomePage extends StatelessWidget {
+class CustomWelcomePage extends StatefulWidget {
+  @override
+  _CustomWelcomePageState createState() => _CustomWelcomePageState();
+}
+
+class _CustomWelcomePageState extends State<CustomWelcomePage> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    print('CustomWelcomePage initialized');
+  }
+
+  @override
+  void dispose() {
+    // Ensure the ScrollController is not attached to any Scrollable before disposing
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.position.minScrollExtent);
+    }
+    _scrollController.dispose();
+    print('CustomWelcomePage disposed');
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    print('CustomWelcomePage build');
     return Scaffold(
       body: Stack(
         children: [
@@ -53,8 +78,9 @@ class CustomWelcomePage extends StatelessWidget {
               return Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(16.0)),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(16.0),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black12,
@@ -68,10 +94,7 @@ class CustomWelcomePage extends StatelessWidget {
                     // Add an icon to indicate draggable area
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.drag_handle_sharp,
-                        color: Colors.grey,
-                      ),
+                      child: Icon(Icons.drag_handle_sharp, color: Colors.grey),
                     ),
                     Flexible(
                       child: SingleChildScrollView(
@@ -102,38 +125,47 @@ class CustomWelcomePage extends StatelessWidget {
                                 title: Text("Không có tài khoản"),
                                 trailing: TextButton(
                                   onPressed: () {
-                                    // Navigate to Sign Up
-                                    Helper.navigateWithAnimation(
-                                        context, '/signup');
+                                    if (mounted) {
+                                      Helper.navigateTo(context, '/signup');
+                                    }
                                   },
-                                  child: Text('Đăng ký',
-                                      style: TextStyle(
-                                          color: Colors.blue,
-                                          fontWeight: FontWeight.bold)),
+                                  child: Text(
+                                    'Đăng ký',
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ),
                               ListTile(
                                 title: Text('Đã có tài khoản'),
                                 trailing: TextButton(
                                   onPressed: () {
-                                    // Navigate to Sign In
-                                    Helper.navigateWithAnimation(
-                                        context, '/login');
+                                    if (mounted) {
+                                      Helper.navigateTo(context, '/login');
+                                    }
                                   },
-                                  child: Text('Đăng nhập',
-                                      style: TextStyle(
-                                          color: Colors.blue,
-                                          fontWeight: FontWeight.bold)),
+                                  child: Text(
+                                    'Đăng nhập',
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ),
                               Divider(),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text('Sign up with social profiles',
-                                      style: TextStyle(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.normal)),
+                                  Text(
+                                    'Sign up with social profiles',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
                                 ],
                               ),
                               SizedBox(height: 8),
@@ -141,22 +173,28 @@ class CustomWelcomePage extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   IconButton(
-                                    icon: Icon(Icons.facebook,
-                                        color: Colors.blue),
+                                    icon: Icon(
+                                      Icons.facebook,
+                                      color: Colors.blue,
+                                    ),
                                     onPressed: () {
                                       // Facebook login
                                     },
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.g_mobiledata_rounded,
-                                        color: Colors.red),
+                                    icon: Icon(
+                                      Icons.g_mobiledata_rounded,
+                                      color: Colors.red,
+                                    ),
                                     onPressed: () {
                                       // Google login
                                     },
                                   ),
                                   IconButton(
-                                    icon:
-                                        Icon(Icons.close, color: Colors.black),
+                                    icon: Icon(
+                                      Icons.close,
+                                      color: Colors.black,
+                                    ),
                                     onPressed: () {
                                       // Other login
                                     },
