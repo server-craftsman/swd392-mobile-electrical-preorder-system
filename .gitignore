@@ -43,18 +43,3 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-/android/app/.cxx/
-/android/app/build/outputs/
-/android/app/build/outputs/apk/
-/android/app/build/outputs/bundle/
-/android/app/build/outputs/mapping/
-/android/app/build/outputs/metadata/
-/android/app/build/outputs/logs/
-/android/app/build/outputs/manifest/
-
-
-# Android build files
-/android/app/build/
-/android/.gradle/
-/*.iml
-build/

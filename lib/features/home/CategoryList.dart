@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/network/category/category_network.dart';
 import 'package:mobile_electrical_preorder_system/core/network/category/category_model.dart';
-import 'package:mobile_electrical_preorder_system/core/network/category/category_response.dart';
+// import 'package:mobile_electrical_preorder_system/core/network/category/category_response.dart';
 
 class CategoryList extends StatefulWidget {
   @override

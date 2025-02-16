@@ -1,8 +1,6 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.swd.elecee"> <!-- Đảm bảo tên package đúng -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="Elecee"
+        android:label="mobile_electrical_preorder_system"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
