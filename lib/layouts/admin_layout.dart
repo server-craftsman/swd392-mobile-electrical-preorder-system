@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:mobile_electrical_preorder_system/features/settings/index.dart';
 
 class AdminLayout extends StatefulWidget {
   final Widget child;
@@ -79,50 +78,52 @@ class _AdminLayoutState extends State<AdminLayout> with WidgetsBindingObserver {
               ),
             ),
             Spacer(),
-            CircleAvatar(
-              backgroundImage: AssetImage(
-                'assets/images/tham.jpg',
-              ), // Add profile image
-            ),
+            CircleAvatar(backgroundImage: AssetImage('assets/images/tham.jpg')),
           ],
         ),
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         elevation: 0,
       ),
       body: widget.child,
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        showUnselectedLabels: true,
-        showSelectedLabels: true,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard, size: 30),
-            label: 'Tổng quan',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 0, 0, 0),
+          borderRadius: BorderRadius.circular(30),
+        ),
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          showUnselectedLabels: false,
+          showSelectedLabels: true,
+          selectedLabelStyle: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.campaign, size: 30),
-            label: 'Chiến dịch',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people, size: 30),
-            label: 'Người dùng',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt, size: 30),
-            label: 'Đơn hàng',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings, size: 30),
-            label: 'Cài đặt',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Color.fromARGB(255, 255, 91, 91),
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
-        onTap: _onItemTapped,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-        unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
+          unselectedLabelStyle: TextStyle(color: Colors.transparent),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home, size: 30),
+              label: 'Tổng quan',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.campaign, size: 30),
+              label: 'Chiến dịch',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.people, size: 30),
+              label: 'Người dùng',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.receipt, size: 30),
+              label: 'Đơn hàng',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Color.fromARGB(255, 255, 89, 89),
+          unselectedItemColor: Colors.white,
+          backgroundColor: Colors.transparent,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }

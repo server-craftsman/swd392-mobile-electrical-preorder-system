@@ -12,6 +12,8 @@ import 'package:mobile_electrical_preorder_system/features/auth/sign_up_page.dar
 //admin
 import 'package:mobile_electrical_preorder_system/features/admin/overview/index.dart';
 import 'package:mobile_electrical_preorder_system/features/admin/campaign/index.dart';
+import 'package:mobile_electrical_preorder_system/features/admin/user/index.dart';
+import 'package:mobile_electrical_preorder_system/features/admin/order/index.dart';
 
 List<GoRoute> publicRoutes = createPublicRoutes([
   {'path': '/home', 'page': HomePage()},
@@ -31,8 +33,8 @@ List<GoRoute> nullRoutes = createNullRoutes([
 
 List<GoRoute> adminRoutes = createAdminRoutes([
   {'path': '/admin/dashboard', 'page': DashboardPage()},
-  {'path': '/admin/campaigns', 'page': CampaignListScreen()},
-  // {'path': '/admin/users', 'page': AdminUsers()},
-  // {'path': '/admin/orders', 'page': AdminOrders()},
+  {'path': '/admin/campaigns', 'page': ManageCampaignPage()},
+  {'path': '/admin/users', 'page': CustomerManagePage()},
+  {'path': '/admin/orders', 'page': AdminOrdersPage()},
   // {'path': '/admin/settings', 'page': AdminSettings()},
 ]);

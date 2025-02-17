@@ -1,124 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: SingleChildScrollView(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Tổng quan',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
+              _buildSearchBar(context),
               SizedBox(height: 20),
-              // Summary of key metrics
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white, // Set background to white
-                ),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _buildMetricCard('Đơn hàng mới', '345'),
-                      SizedBox(width: 10),
-                      _buildMetricCard('Khách hàng mới', '120'),
-                      SizedBox(width: 10),
-                      _buildMetricCard('Doanh thu', '12,345 VNĐ'),
-                    ],
-                  ),
-                ),
-              ),
+              _buildUpdateCard(),
               SizedBox(height: 20),
-              // Interactive line chart
-              Card(
-                color: Colors.white, // Set card background to white
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Biểu đồ doanh thu', style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 10),
-                      Container(
-                        height: 200,
-                        child: LineChart(
-                          LineChartData(
-                            lineBarsData: [
-                              LineChartBarData(
-                                spots: _createSampleData(),
-                                isCurved: true,
-                                barWidth: 2,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              _buildMetricsRow(context),
               SizedBox(height: 20),
-              // Recent activity log
-              Card(
-                color: Colors.white, // Set card background to white
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Hoạt động gần đây', style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 10),
-                      ListTile(
-                        leading: Icon(Icons.shopping_cart),
-                        title: Text('Đơn hàng #1234 đã được đặt'),
-                        subtitle: Text('5 phút trước'),
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.person_add),
-                        title: Text('Khách hàng mới: Phạm Thị Thắm'),
-                        subtitle: Text('10 phút trước'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              // Existing card for tasks and events
-              Card(
-                color: Colors.white, // Set card background to white
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Quản lí chiến dịch',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      SizedBox(height: 10),
-                      ListTile(
-                        leading: Icon(Icons.campaign),
-                        title: Text('Chiến dịch quảng cáo mùa hè'),
-                        subtitle: Text('Ngày bắt đầu: 16/02/2025'),
-                        trailing: Chip(label: Text('Active')),
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.campaign),
-                        title: Text('Chiến dịch giảm giá cuối năm'),
-                        subtitle: Text('Ngày bắt đầu: 16/02/2025'),
-                        trailing: Chip(label: Text('Active')),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              _buildTransactionList(),
             ],
           ),
         ),
@@ -126,18 +25,108 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  // Helper method to build metric cards
-  Widget _buildMetricCard(String title, String value) {
+  Widget _buildSearchBar(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: constraints.maxWidth),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Tìm kiếm...',
+                prefixIcon: Icon(Icons.search, color: Colors.red),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide(color: Colors.red),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide(color: Colors.red),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildUpdateCard() {
     return Card(
+      color: Color(0xFF002B1F), // Dark green color
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: TextStyle(fontSize: 16)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.circle, color: Colors.red, size: 10),
+                    SizedBox(width: 8),
+                    Text(
+                      'Update',
+                      style: TextStyle(color: Colors.white, fontSize: 14),
+                    ),
+                  ],
+                ),
+                Icon(Icons.more_vert, color: Colors.white),
+              ],
+            ),
             SizedBox(height: 10),
             Text(
-              value,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              'Feb 12th 2024',
+              style: TextStyle(color: Colors.white, fontSize: 14),
+            ),
+            SizedBox(height: 10),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Sales revenue increased ',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: '40%',
+                    style: TextStyle(
+                      color: Colors.greenAccent,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: ' in 1 week',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Text(
+                  'See Statistics',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+                Icon(Icons.arrow_right, color: Colors.white),
+              ],
             ),
           ],
         ),
@@ -145,8 +134,147 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  // Sample data for the line chart
-  List<FlSpot> _createSampleData() {
-    return [FlSpot(0, 5), FlSpot(1, 25), FlSpot(2, 100), FlSpot(3, 75)];
+  Widget _buildMetricsRow(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width * 0.45,
+            child: _buildMetricCard(
+              'Net Income',
+              '\$193.000',
+              '+35%',
+              'from last month',
+              Color(0xFF00C853),
+            ),
+          ),
+          SizedBox(width: 16),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.45,
+            child: _buildMetricCard(
+              'Total Return',
+              '\$32.000',
+              '-24%',
+              'from last month',
+              Color(0xFFD50000),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetricCard(
+    String title,
+    String value,
+    String percentage,
+    String subtitle,
+    Color changeColor,
+  ) {
+    return Card(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisSize: MainAxisSize.min, // Added to prevent overflow
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(
+                  // Changed from Flexible to Expanded to ensure the text takes available space
+                  child: Text(title, style: TextStyle(fontSize: 16)),
+                ),
+                Icon(Icons.more_horiz, color: Colors.black),
+              ],
+            ),
+            SizedBox(height: 10),
+            Text(
+              value,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Icon(
+                  changeColor == Color(0xFF00C853)
+                      ? Icons.arrow_upward
+                      : Icons.arrow_downward,
+                  color: changeColor,
+                  size: 16,
+                ),
+                SizedBox(width: 4),
+                Expanded(
+                  // Changed from Flexible to Expanded to ensure the text takes available space
+                  child: Row(
+                    children: [
+                      Text(
+                        percentage,
+                        style: TextStyle(fontSize: 14, color: changeColor),
+                      ),
+                      SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          subtitle,
+                          style: TextStyle(fontSize: 14, color: Colors.black),
+                          overflow:
+                              TextOverflow.ellipsis, // Added to handle overflow
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTransactionList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Giao hàng',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 10),
+        _buildTransactionItem(
+          'Tinek Detstar T-Shirt',
+          'Jul 12th 2024',
+          'Completed',
+          Icons.check_circle,
+          Colors.green,
+        ),
+        _buildTransactionItem(
+          'Playstation 5',
+          'Jul 12th 2024',
+          'Pending',
+          Icons.videogame_asset,
+          Colors.orange,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTransactionItem(
+    String title,
+    String date,
+    String status,
+    IconData icon,
+    Color iconColor,
+  ) {
+    return ListTile(
+      leading: Icon(icon, color: iconColor),
+      title: Text(title),
+      subtitle: Text(date),
+      trailing: Text(status),
+    );
   }
 }
