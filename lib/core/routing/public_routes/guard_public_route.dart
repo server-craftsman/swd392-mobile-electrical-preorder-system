@@ -23,6 +23,8 @@ GoRoute firstGuardRoute(String path, Widget child) {
 GoRoute adminGuardRoute(String path, Widget child) {
   return GoRoute(
     path: path,
-    builder: (context, state) => AdminLayout(child: child),
+    builder: (context, state) {
+      return AdminLayout(child: child);
+    },
   );
 }

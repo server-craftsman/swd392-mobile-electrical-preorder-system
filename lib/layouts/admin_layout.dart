@@ -40,43 +40,38 @@ class _AdminLayoutState extends State<AdminLayout> with WidgetsBindingObserver {
 
   void _onItemTapped(int index) async {
     if (mounted) {
-      setState(() {
-        _selectedIndex = index;
-      });
-      _pageController.animateToPage(
-        index,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('selectedIndex', index);
-
-    // Prevent multiple actions from being executed
-    if (mounted) {
       // Only navigate if the index has changed
       if (_selectedIndex != index) {
-        return; // Exit if the selected index has already changed
-      }
+        setState(() {
+          _selectedIndex = index;
+        });
+        _pageController.animateToPage(
+          index,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
 
-      // Navigate based on the selected tab index
-      switch (index) {
-        case 0:
-          Helper.navigateTo(context, '/admin/dashboard');
-          break;
-        case 1:
-          Helper.navigateTo(context, '/admin/campaigns');
-          break;
-        case 2:
-          Helper.navigateTo(context, '/admin/users');
-          break;
-        case 3:
-          Helper.navigateTo(context, '/admin/orders');
-          break;
-        case 4:
-          Helper.navigateTo(context, '/admin/settings');
-          break;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('selectedIndex', index);
+
+        // Navigate based on the selected tab index
+        switch (index) {
+          case 0:
+            Helper.navigateTo(context, '/admin/dashboard');
+            break;
+          case 1:
+            Helper.navigateTo(context, '/admin/campaigns');
+            break;
+          case 2:
+            Helper.navigateTo(context, '/admin/users');
+            break;
+          case 3:
+            Helper.navigateTo(context, '/admin/orders');
+            break;
+          case 4:
+            Helper.navigateTo(context, '/admin/settings');
+            break;
+        }
       }
     }
   }
@@ -154,7 +149,16 @@ class _AdminLayoutState extends State<AdminLayout> with WidgetsBindingObserver {
           selectedItemColor: Color.fromARGB(255, 255, 89, 89),
           unselectedItemColor: Colors.white,
           backgroundColor: Colors.transparent,
-          onTap: _onItemTapped,
+          onTap: (index) {
+            if (_selectedIndex != index) {
+              _pageController.animateToPage(
+                index,
+                duration: Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+              _onItemTapped(index);
+            }
+          },
         ),
       ),
     );
