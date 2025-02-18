@@ -54,30 +54,32 @@ class CustomerManagePage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildDateSelector(),
-            SizedBox(height: 20),
-            _buildStatistics(),
-            SizedBox(height: 20),
-            Expanded(child: _buildRecentTransactions()), // Fix overflow
-            SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Handle see more action
-                },
-                child: Text('See More'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDateSelector(),
+              SizedBox(height: 20),
+              _buildStatistics(),
+              SizedBox(height: 1),
+              _buildRecentTransactions(),
+              SizedBox(height: 10),
+              // Center(
+              //   child: ElevatedButton(
+              //     onPressed: () {
+              //       // Handle see more action
+              //     },
+              //     child: Text('Xem thêm'),
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: Colors.black,
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(20),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
         ),
       ),
     );
@@ -209,29 +211,29 @@ class CustomerManagePage extends StatelessWidget {
   }
 
   Widget _buildRecentTransactions() {
-    return ListView(
+    return Column(
       children: [
         Text(
-          'Recent Transaction',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          'Giao dịch gần đây',
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 10),
         _buildTransactionItem(
-          'Matt Sanderson',
+          'Phạm Thị Thắm',
           '11 May 2023',
-          '+\$1400',
+          '100.000đ',
           Colors.green,
         ),
         _buildTransactionItem(
-          'Anatasya Gabriella',
+          'Nguyễn Đan Huy',
           '20 Jan 2024',
-          '-\$800',
+          '100.000đ',
           Colors.red,
         ),
         _buildTransactionItem(
-          'Eliot Russel',
+          'Nguyễn Đan Huy',
           '14 Feb 2024',
-          '+\$1400',
+          '100.000đ',
           Colors.green,
         ),
       ],
@@ -245,10 +247,10 @@ class CustomerManagePage extends StatelessWidget {
     Color amountColor,
   ) {
     return ListTile(
-      contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
       leading: CircleAvatar(
-        backgroundImage: AssetImage('assets/images/avatar_placeholder.png'),
-        radius: 24,
+        backgroundImage: AssetImage('assets/images/tham.jpg'),
+        radius: 10,
       ),
       title: Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
       subtitle: Text(date, style: TextStyle(color: Colors.grey)),
@@ -257,7 +259,7 @@ class CustomerManagePage extends StatelessWidget {
         style: TextStyle(
           color: amountColor,
           fontWeight: FontWeight.bold,
-          fontSize: 16,
+          fontSize: 10,
         ),
       ),
     );

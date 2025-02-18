@@ -12,6 +12,7 @@ class AdminLayout extends StatefulWidget {
 
 class _AdminLayoutState extends State<AdminLayout> with WidgetsBindingObserver {
   int _selectedIndex = 0;
+  PageController _pageController = PageController();
 
   @override
   void initState() {
@@ -23,6 +24,7 @@ class _AdminLayoutState extends State<AdminLayout> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -32,6 +34,7 @@ class _AdminLayoutState extends State<AdminLayout> with WidgetsBindingObserver {
       setState(() {
         _selectedIndex = prefs.getInt('selectedIndex') ?? 0;
       });
+      _pageController.jumpToPage(_selectedIndex);
     }
   }
 
@@ -40,26 +43,41 @@ class _AdminLayoutState extends State<AdminLayout> with WidgetsBindingObserver {
       setState(() {
         _selectedIndex = index;
       });
+      _pageController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('selectedIndex', index);
 
-    switch (index) {
-      case 0:
-        Helper.navigateTo(context, '/admin/dashboard');
-        break;
-      case 1:
-        Helper.navigateTo(context, '/admin/campaigns');
-        break;
-      case 2:
-        Helper.navigateTo(context, '/admin/users');
-        break;
-      case 3:
-        Helper.navigateTo(context, '/admin/orders');
-        break;
-      case 4:
-        Helper.navigateTo(context, '/admin/settings');
-        break;
+    // Prevent multiple actions from being executed
+    if (mounted) {
+      // Only navigate if the index has changed
+      if (_selectedIndex != index) {
+        return; // Exit if the selected index has already changed
+      }
+
+      // Navigate based on the selected tab index
+      switch (index) {
+        case 0:
+          Helper.navigateTo(context, '/admin/dashboard');
+          break;
+        case 1:
+          Helper.navigateTo(context, '/admin/campaigns');
+          break;
+        case 2:
+          Helper.navigateTo(context, '/admin/users');
+          break;
+        case 3:
+          Helper.navigateTo(context, '/admin/orders');
+          break;
+        case 4:
+          Helper.navigateTo(context, '/admin/settings');
+          break;
+      }
     }
   }
 
@@ -84,7 +102,21 @@ class _AdminLayoutState extends State<AdminLayout> with WidgetsBindingObserver {
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         elevation: 0,
       ),
-      body: widget.child,
+      body: PageView(
+        controller: _pageController,
+        children: [
+          widget.child, // Assuming this is the dashboard
+          // Container(), // Placeholder for campaigns
+          // Container(), // Placeholder for users
+          // Container(), // Placeholder for orders
+          // Container(), // Placeholder for settings
+        ],
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Color.fromARGB(255, 0, 0, 0),
