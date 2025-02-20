@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
 import 'package:mobile_electrical_preorder_system/core/network/auth/auth_network.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:mobile_electrical_preorder_system/core/utils/token.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final FocusNode _usernameFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
+  // final TokenService _tokenService = TokenService();
 
   @override
   void dispose() {
@@ -22,6 +24,15 @@ class _LoginPageState extends State<LoginPage> {
     _usernameFocus.dispose();
     _passwordFocus.dispose();
     super.dispose();
+  }
+
+  Future<void> _checkToken() async {
+    final accessToken = await TokenService.decodeAccessToken(
+      await TokenService.getAccessToken() ?? '',
+    );
+    if (accessToken != null) {
+      Helper.navigateTo(context, '/admin/dashboard');
+    }
   }
 
   @override
@@ -133,22 +144,22 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 16),
                 _buildSocialIcons(context),
                 SizedBox(height: 32),
-                GestureDetector(
-                  onTap: () {
-                    Helper.navigateTo(context, '/signup');
-                  },
-                  child: Text.rich(
-                    TextSpan(
-                      text: 'Bạn chưa có tài khoản? ',
-                      children: [
-                        TextSpan(
-                          text: 'Đăng ký tài khoản',
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                // GestureDetector(
+                //   onTap: () {
+                //     Helper.navigateTo(context, '/signup');
+                //   },
+                //   child: Text.rich(
+                //     TextSpan(
+                //       text: 'Bạn chưa có tài khoản? ',
+                //       children: [
+                //         TextSpan(
+                //           text: 'Đăng ký tài khoản',
+                //           style: TextStyle(color: Colors.blue),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
                 // Add extra padding at bottom for keyboard
                 SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
               ],
@@ -188,22 +199,26 @@ class _LoginPageState extends State<LoginPage> {
       final accessToken = await _authNetwork.login(
         _usernameController.text,
         _passwordController.text,
+        googleAccountId: "",
+        fullName: "",
       );
-
       if (accessToken != null) {
+        print('Access Token: $accessToken');
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        Helper.navigateTo(context, '/');
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.',
-            ),
-            backgroundColor: Colors.red,
-          ),
-        );
+        Helper.navigateTo(context, '/admin/dashboard');
       }
+      //   print('Login failed: No access token received');
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       content: Text(
+      //         'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.',
+      //       ),
+      //       backgroundColor: Colors.red,
+      //     ),
+      //   );
+      // }
     } catch (e) {
+      print('Error during login: $e');
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

@@ -11,6 +11,10 @@ class ApiClient {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
+      validateStatus: (status) {
+        // Allow all status codes to pass through without throwing an exception
+        return true;
+      },
     ),
   );
 
@@ -62,7 +66,7 @@ class ApiClient {
               errorDescription = "Bad certificate";
               break;
             case DioExceptionType.badResponse:
-              errorDescription = "Bad response";
+              errorDescription = "Bad response: ${e.response?.statusCode}";
               break;
             case DioExceptionType.connectionError:
               errorDescription = "Connection error";
@@ -94,7 +98,13 @@ class ApiClient {
   }
 
   Future<Response> post(String path, {dynamic data}) async {
-    return await _dio.post(path, data: jsonEncode(data));
+    try {
+      final response = await _dio.post(path, data: jsonEncode(data));
+      return response;
+    } catch (e) {
+      print('Error: $e');
+      rethrow;
+    }
   }
 
   Future<Response> put(String path, {dynamic data}) async {
