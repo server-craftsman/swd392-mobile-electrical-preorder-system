@@ -3,6 +3,7 @@ import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
 import 'package:mobile_electrical_preorder_system/core/network/auth/auth_network.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:mobile_electrical_preorder_system/core/middleware/token_middleware.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -15,7 +16,35 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final FocusNode _usernameFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
-  // final TokenService _tokenService = TokenService();
+  bool _obscurePassword = true;
+  bool _rememberMe = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCredentials();
+  }
+
+  void _loadCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _usernameController.text = prefs.getString('username') ?? '';
+      _passwordController.text = prefs.getString('password') ?? '';
+      _rememberMe = prefs.getBool('rememberMe') ?? false;
+    });
+  }
+
+  void _saveCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (_rememberMe) {
+      await prefs.setString('username', _usernameController.text);
+      await prefs.setString('password', _passwordController.text);
+    } else {
+      await prefs.remove('username');
+      await prefs.remove('password');
+    }
+    await prefs.setBool('rememberMe', _rememberMe);
+  }
 
   @override
   void dispose() {
@@ -25,15 +54,6 @@ class _LoginPageState extends State<LoginPage> {
     _passwordFocus.dispose();
     super.dispose();
   }
-
-  // Future<void> _checkToken() async {
-  //   final accessToken = await TokenService.decodeAccessToken(
-  //     await TokenService.getAccessToken() ?? '',
-  //   );
-  //   if (accessToken != null) {
-  //     Helper.navigateTo(context, '/admin/dashboard');
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +98,9 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.2,
+                ), // 20% of the screen height
                 Text(
                   'Đăng nhập',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -97,13 +120,25 @@ class _LoginPageState extends State<LoginPage> {
                 _buildConstrainedTextField(
                   'Mật khẩu',
                   'Nhập mật khẩu của bạn',
-                  obscureText: true,
+                  obscureText: _obscurePassword,
                   controller: _passwordController,
                   focusNode: _passwordFocus,
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) {
                     _handleLogin();
                   },
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
                 ),
                 SizedBox(height: 16),
                 Row(
@@ -111,7 +146,16 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     Row(
                       children: [
-                        Checkbox(value: false, onChanged: (value) {}),
+                        Checkbox(
+                          value: _rememberMe,
+                          onChanged: (value) {
+                            setState(() {
+                              _rememberMe = value ?? false;
+                            });
+                          },
+                          activeColor:
+                              Colors.black, // Set the active color to red
+                        ),
                         Text('Remember me'),
                       ],
                     ),
@@ -130,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: ElevatedButton(
                     onPressed: _handleLogin,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Colors.red,
                       padding: EdgeInsets.symmetric(vertical: 10),
                     ),
                     child: Text(
@@ -139,11 +183,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
-                Text('Đăng nhập với tài khoản mạng xã hội'),
-                SizedBox(height: 16),
-                _buildSocialIcons(context),
-                SizedBox(height: 32),
+                // SizedBox(height: 16),
+                // Text('Đăng nhập với tài khoản mạng xã hội'),
+                // SizedBox(height: 16),
+                // _buildSocialIcons(context),
+                // SizedBox(height: 32),
                 // GestureDetector(
                 //   onTap: () {
                 //     Helper.navigateTo(context, '/signup');
@@ -160,7 +204,6 @@ class _LoginPageState extends State<LoginPage> {
                 //     ),
                 //   ),
                 // ),
-                // Add extra padding at bottom for keyboard
                 SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
               ],
             ),
@@ -204,6 +247,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (accessToken != null) {
+        _saveCredentials();
         print('Access Token: $accessToken');
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
@@ -265,6 +309,7 @@ class _LoginPageState extends State<LoginPage> {
     FocusNode? focusNode,
     TextInputAction? textInputAction,
     Function(String)? onSubmitted,
+    Widget? suffixIcon,
   }) {
     return SizedBox(
       width: double.infinity,
@@ -274,10 +319,21 @@ class _LoginPageState extends State<LoginPage> {
         obscureText: obscureText,
         textInputAction: textInputAction,
         onSubmitted: onSubmitted,
+        cursorColor: Colors.red,
         decoration: InputDecoration(
           labelText: label,
+          labelStyle: TextStyle(color: Colors.red),
           hintText: hint,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          suffixIcon: suffixIcon,
         ),
       ),
     );

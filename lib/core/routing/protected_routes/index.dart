@@ -5,11 +5,13 @@ import 'package:mobile_electrical_preorder_system/features/admin/overview/index.
 import 'package:mobile_electrical_preorder_system/features/admin/campaign/index.dart';
 import 'package:mobile_electrical_preorder_system/features/admin/user/index.dart';
 import 'package:mobile_electrical_preorder_system/features/admin/order/index.dart';
+import 'package:mobile_electrical_preorder_system/features/profile/profile_page.dart';
 
 List<GoRoute> adminRoutes = createAdminProtectedRoutes([
   {'path': '/admin/dashboard', 'page': DashboardPage()},
   {'path': '/admin/campaigns', 'page': ManageCampaignPage()},
   {'path': '/admin/users', 'page': CustomerManagePage()},
   {'path': '/admin/orders', 'page': AdminOrdersPage()},
+  {'path': '/admin/profile', 'page': ProfilePage()},
   // {'path': '/admin/settings', 'page': AdminSettings()},
 ]);

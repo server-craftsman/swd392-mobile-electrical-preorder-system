@@ -8,17 +8,19 @@ class DashboardPage extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSearchBar(context),
-              SizedBox(height: 20),
-              _buildUpdateCard(),
-              SizedBox(height: 20),
-              _buildMetricsRow(context),
-              SizedBox(height: 20),
-              _buildTransactionList(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSearchBar(context),
+                SizedBox(height: 20),
+                _buildUpdateCard(),
+                SizedBox(height: 20),
+                _buildMetricsRow(context),
+                SizedBox(height: 20),
+                _buildTransactionList(),
+              ],
+            ),
           ),
         ),
       ),
@@ -26,30 +28,32 @@ class DashboardPage extends StatelessWidget {
   }
 
   Widget _buildSearchBar(BuildContext context) {
-    return Container(
+    return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: constraints.maxWidth),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Tìm kiếm...',
-                prefixIcon: Icon(Icons.search, color: Colors.red),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: BorderSide(color: Colors.red),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: BorderSide(color: Colors.red),
+      child: SingleChildScrollView(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: constraints.maxWidth),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Tìm kiếm...',
+                  prefixIcon: Icon(Icons.search, color: Colors.red),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide(color: Colors.red),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide(color: Colors.red),
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

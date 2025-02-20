@@ -89,8 +89,8 @@ flutter:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/tham.jpg" # Đường dẫn đến file icon
+  image_path: "assets/images/Tham-Nho/Tham1.jpg" # Đường dẫn đến file icon
   adaptive_icon_background: "#ffffff" # Nền cho icon Android adaptive (tuỳ chọn)
-  adaptive_icon_foreground: "assets/images/tham.jpg" # Foreground icon Android adaptive (tuỳ chọn)
+  adaptive_icon_foreground: "assets/images/Tham-Nho/Tham1.jpg" # Foreground icon Android adaptive (tuỳ chọn)
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

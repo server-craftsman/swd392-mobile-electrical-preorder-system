@@ -185,42 +185,42 @@ class _CustomWelcomePageState extends State<CustomWelcomePage>
                                   ),
                                 ),
                                 Divider(),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Đăng nhập với tài khoản mạng xã hội',
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 8),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.facebook,
-                                        color: Colors.blue,
-                                      ),
-                                      onPressed: () {
-                                        // Facebook login
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.g_mobiledata_rounded,
-                                        color: Colors.red,
-                                      ),
-                                      onPressed: () {
-                                        // Google login
-                                      },
-                                    ),
-                                  ],
-                                ),
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.center,
+                                //   children: [
+                                //     Text(
+                                //       'Đăng nhập với tài khoản mạng xã hội',
+                                //       style: TextStyle(
+                                //         color: Colors.grey,
+                                //         fontWeight: FontWeight.normal,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
+                                // SizedBox(height: 8),
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.center,
+                                //   children: [
+                                //     IconButton(
+                                //       icon: Icon(
+                                //         Icons.facebook,
+                                //         color: Colors.blue,
+                                //       ),
+                                //       onPressed: () {
+                                //         // Facebook login
+                                //       },
+                                //     ),
+                                //     IconButton(
+                                //       icon: Icon(
+                                //         Icons.g_mobiledata_rounded,
+                                //         color: Colors.red,
+                                //       ),
+                                //       onPressed: () {
+                                //         // Google login
+                                //       },
+                                //     ),
+                                //   ],
+                                // ),
                               ],
                             ),
                           ),

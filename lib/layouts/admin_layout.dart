@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mobile_electrical_preorder_system/core/middleware/token_middleware.dart';
 
 class AdminLayout extends StatefulWidget {
   final Widget child;
@@ -13,12 +14,14 @@ class AdminLayout extends StatefulWidget {
 class _AdminLayoutState extends State<AdminLayout> with WidgetsBindingObserver {
   int _selectedIndex = 0;
   PageController _pageController = PageController();
+  String _fullName = 'Admin';
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadSelectedIndex();
+    _loadFullName();
   }
 
   @override
@@ -36,6 +39,24 @@ class _AdminLayoutState extends State<AdminLayout> with WidgetsBindingObserver {
       });
       _pageController.jumpToPage(_selectedIndex);
     }
+  }
+
+  Future<void> _loadFullName() async {
+    final accessToken = await TokenService.getAccessToken();
+    if (accessToken != null) {
+      final decodedToken = await TokenService.decodeAccessToken(accessToken);
+      if (decodedToken != null && decodedToken.containsKey('fullName')) {
+        setState(() {
+          _fullName = decodedToken['fullName'];
+        });
+      }
+    }
+  }
+
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clear all stored preferences including tokens
+    Helper.navigateTo(context, '/');
   }
 
   void _onItemTapped(int index) async {
@@ -82,19 +103,56 @@ class _AdminLayoutState extends State<AdminLayout> with WidgetsBindingObserver {
       appBar: AppBar(
         title: Row(
           children: [
+            // Spacer(),
+            SizedBox(width: 8),
             Text(
-              'Chào Admin, Huy IT',
+              'Xin chào, $_fullName',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: 16,
                 color: Colors.black,
               ),
             ),
             Spacer(),
-            CircleAvatar(backgroundImage: AssetImage('assets/images/tham.jpg')),
+            PopupMenuButton<String>(
+              offset: Offset(0, 60), // Move the dropdown down a bit
+              icon: CircleAvatar(
+                backgroundColor: Colors.black,
+                child: Text(
+                  _fullName[0], // Display the first letter of the full name
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              color: Colors.white, // Set background color to white
+              onSelected: (value) {
+                if (value == 'logout') {
+                  _logout();
+                } else if (value == 'profile') {
+                  Helper.navigateTo(context, '/admin/profile');
+                }
+              },
+              itemBuilder:
+                  (BuildContext context) => <PopupMenuEntry<String>>[
+                    PopupMenuItem<String>(
+                      value: 'profile',
+                      child: ListTile(
+                        leading: Icon(Icons.account_circle),
+                        title: Text('Thông tin tài khoản'),
+                      ),
+                    ),
+                    PopupMenuItem<String>(
+                      value: 'logout',
+                      child: ListTile(
+                        leading: Icon(Icons.logout),
+                        title: Text('Đăng xuất'),
+                        textColor: Colors.red,
+                      ),
+                    ),
+                  ],
+            ),
           ],
         ),
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: Colors.white,
         elevation: 0,
       ),
       body: PageView(
