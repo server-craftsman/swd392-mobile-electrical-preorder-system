@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
 import 'package:mobile_electrical_preorder_system/core/network/auth/auth_network.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:mobile_electrical_preorder_system/core/utils/token.dart';
+import 'package:mobile_electrical_preorder_system/core/middleware/token_middleware.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -26,14 +26,14 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  Future<void> _checkToken() async {
-    final accessToken = await TokenService.decodeAccessToken(
-      await TokenService.getAccessToken() ?? '',
-    );
-    if (accessToken != null) {
-      Helper.navigateTo(context, '/admin/dashboard');
-    }
-  }
+  // Future<void> _checkToken() async {
+  //   final accessToken = await TokenService.decodeAccessToken(
+  //     await TokenService.getAccessToken() ?? '',
+  //   );
+  //   if (accessToken != null) {
+  //     Helper.navigateTo(context, '/admin/dashboard');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -202,21 +202,49 @@ class _LoginPageState extends State<LoginPage> {
         googleAccountId: "",
         fullName: "",
       );
+
       if (accessToken != null) {
         print('Access Token: $accessToken');
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        Helper.navigateTo(context, '/admin/dashboard');
+
+        // Decode the role from the access token
+        final decodedToken = await TokenService.decodeAccessToken(accessToken);
+        final role = decodedToken?['role'];
+
+        // Navigate based on the role
+        if (role != null) {
+          switch (role) {
+            case 'ROLE_ADMIN':
+              Helper.navigateTo(context, '/admin/dashboard');
+              break;
+            case 'ROLE_STAFF':
+              Helper.navigateTo(context, '/home');
+              break;
+            // Add more roles and their corresponding routes as needed
+            default:
+              Helper.navigateTo(context, '/');
+              break;
+          }
+        } else {
+          // Handle case where role is not found
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Không thể xác định vai trò người dùng.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } else {
+        // Handle login failure
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
-      //   print('Login failed: No access token received');
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(
-      //       content: Text(
-      //         'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.',
-      //       ),
-      //       backgroundColor: Colors.red,
-      //     ),
-      //   );
-      // }
     } catch (e) {
       print('Error during login: $e');
       ScaffoldMessenger.of(context).hideCurrentSnackBar();

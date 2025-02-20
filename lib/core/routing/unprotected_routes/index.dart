@@ -31,10 +31,10 @@ List<GoRoute> nullRoutes = createNullRoutes([
   {'path': '/setting', 'page': SettingsDrawer()},
 ]);
 
-List<GoRoute> adminRoutes = createAdminRoutes([
-  {'path': '/admin/dashboard', 'page': DashboardPage()},
-  {'path': '/admin/campaigns', 'page': ManageCampaignPage()},
-  {'path': '/admin/users', 'page': CustomerManagePage()},
-  {'path': '/admin/orders', 'page': AdminOrdersPage()},
-  // {'path': '/admin/settings', 'page': AdminSettings()},
-]);
+// List<GoRoute> adminRoutes = createAdminRoutes([
+//   {'path': '/admin/dashboard', 'page': DashboardPage()},
+//   {'path': '/admin/campaigns', 'page': ManageCampaignPage()},
+//   {'path': '/admin/users', 'page': CustomerManagePage()},
+//   {'path': '/admin/orders', 'page': AdminOrdersPage()},
+//   // {'path': '/admin/settings', 'page': AdminSettings()},
+// ]);

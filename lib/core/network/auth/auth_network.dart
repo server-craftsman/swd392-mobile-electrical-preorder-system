@@ -1,6 +1,6 @@
 import 'package:mobile_electrical_preorder_system/core/network/config/api_client.dart';
 import 'package:dio/dio.dart';
-import 'package:mobile_electrical_preorder_system/core/utils/token.dart';
+import 'package:mobile_electrical_preorder_system/core/middleware/token_middleware.dart';
 
 class AuthNetwork {
   final ApiClient _apiClient = ApiClient();
