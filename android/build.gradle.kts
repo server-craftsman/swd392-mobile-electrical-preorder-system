@@ -20,3 +20,12 @@ tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
 
+plugins {
+    // ... các plugin khác
+    id("com.google.gms.google-services") version "4.3.15" apply false
+}
+
+repositories {
+    google()
+    mavenCentral()
+}
