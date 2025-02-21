@@ -4,25 +4,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile_electrical_preorder_system/core/middleware/token_middleware.dart';
 
 // Pages
-import 'package:mobile_electrical_preorder_system/features/admin/overview/index.dart';
-import 'package:mobile_electrical_preorder_system/features/admin/campaign/index.dart';
-import 'package:mobile_electrical_preorder_system/features/admin/user/index.dart';
-import 'package:mobile_electrical_preorder_system/features/admin/order/index.dart';
+import 'package:mobile_electrical_preorder_system/features/manager/overview/index.dart';
+import 'package:mobile_electrical_preorder_system/features/manager/statistic/index.dart';
+import 'package:mobile_electrical_preorder_system/features/manager/customer/index.dart';
+import 'package:mobile_electrical_preorder_system/features/manager/order/index.dart';
 
-class AdminLayout extends StatefulWidget {
+class ManagerLayout extends StatefulWidget {
   @override
-  _AdminLayoutState createState() => _AdminLayoutState();
+  _ManagerLayoutState createState() => _ManagerLayoutState();
 }
 
-class _AdminLayoutState extends State<AdminLayout> {
+class _ManagerLayoutState extends State<ManagerLayout> {
   int _selectedIndex = 0;
-  String _fullName = 'Admin';
+  String _fullName = 'Manager';
 
   final List<Widget> _pages = [
-    DashboardPage(),
-    ManageCampaignPage(),
-    CustomerManagePage(),
-    AdminOrdersPage(),
+    OverviewPage(),
+    StatisticPage(),
+    CustomerManagerPage(),
+    ManagerOrdersPage(),
   ];
 
   final List<BottomNavigationBarItem> _navItems = [
@@ -32,15 +32,15 @@ class _AdminLayoutState extends State<AdminLayout> {
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.campaign, size: 30),
-      label: 'Chiến dịch',
+      label: 'Đơn Hàng',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.people, size: 30),
-      label: 'Người dùng',
+      label: 'Khách hàng',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.receipt, size: 30),
-      label: 'Đơn hàng',
+      label: 'Thống kê',
     ),
   ];
 
@@ -119,7 +119,7 @@ class _AdminLayoutState extends State<AdminLayout> {
         if (value == 'logout') {
           _logout();
         } else if (value == 'profile') {
-          Helper.navigateTo(context, '/admin/profile');
+          Helper.navigateTo(context, '/manager/profile');
         }
       },
       itemBuilder:

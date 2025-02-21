@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
-class AdminOrdersPage extends StatelessWidget {
+class AdminOrdersPage extends StatefulWidget {
+  @override
+  _AdminOrdersPageState createState() => _AdminOrdersPageState();
+}
+
+class _AdminOrdersPageState extends State<AdminOrdersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

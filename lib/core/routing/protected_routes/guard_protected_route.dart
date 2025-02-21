@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_electrical_preorder_system/core/middleware/token_middleware.dart';
 import 'package:mobile_electrical_preorder_system/layouts/admin_layout.dart';
-import 'package:mobile_electrical_preorder_system/layouts/main_layout.dart';
+import 'package:mobile_electrical_preorder_system/layouts/manager_layout.dart';
 
-GoRoute adminGuardRoute(String path, Widget child) {
+GoRoute protectedGuardRoute(String path, Widget child) {
   return GoRoute(
     path: path,
     builder: (context, state) {
@@ -18,6 +18,7 @@ GoRoute adminGuardRoute(String path, Widget child) {
             return Center(child: Text('Error fetching token'));
           } else {
             final accessToken = snapshot.data;
+            print(accessToken);
             return FutureBuilder(
               future: TokenService.decodeAccessToken(accessToken ?? ''),
               builder: (context, snapshot) {
@@ -30,9 +31,9 @@ GoRoute adminGuardRoute(String path, Widget child) {
                   final role = decodedToken?['role'];
 
                   if (role == 'ROLE_ADMIN') {
-                    return AdminLayout(child: child);
-                  } else if (role == 'ROLE_STAFF') {
-                    return MainLayout(child: child);
+                    return AdminLayout();
+                  } else if (role == 'ROLE_MANAGER') {
+                    return ManagerLayout();
                   } else {
                     return Center(child: Text('Access Denied'));
                   }

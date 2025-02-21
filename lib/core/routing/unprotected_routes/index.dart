@@ -10,10 +10,16 @@ import 'package:mobile_electrical_preorder_system/features/first/index.dart';
 import 'package:mobile_electrical_preorder_system/features/auth/sign_up_page.dart';
 
 //admin
-import 'package:mobile_electrical_preorder_system/features/admin/overview/index.dart';
-import 'package:mobile_electrical_preorder_system/features/admin/campaign/index.dart';
-import 'package:mobile_electrical_preorder_system/features/admin/user/index.dart';
-import 'package:mobile_electrical_preorder_system/features/admin/order/index.dart';
+// import 'package:mobile_electrical_preorder_system/features/admin/overview/index.dart';
+// import 'package:mobile_electrical_preorder_system/features/admin/campaign/index.dart';
+// import 'package:mobile_electrical_preorder_system/features/admin/user/index.dart';
+// import 'package:mobile_electrical_preorder_system/features/admin/order/index.dart';
+
+//manager
+import 'package:mobile_electrical_preorder_system/features/manager/overview/index.dart';
+import 'package:mobile_electrical_preorder_system/features/manager/statistic/index.dart';
+import 'package:mobile_electrical_preorder_system/features/manager/customer/index.dart';
+import 'package:mobile_electrical_preorder_system/features/manager/order/index.dart';
 
 List<GoRoute> publicRoutes = createPublicRoutes([
   {'path': '/home', 'page': HomePage()},

@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 
-class CustomerManagePage extends StatelessWidget {
+class CustomerManagePage extends StatefulWidget {
+  @override
+  _CustomerManagePageState createState() => _CustomerManagePageState();
+}
+
+class _CustomerManagePageState extends State<CustomerManagePage> {
+  String _selectedMonth = 'January';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +34,7 @@ class CustomerManagePage extends StatelessWidget {
                 Icon(Icons.calendar_today, color: Colors.white),
                 SizedBox(width: 5),
                 DropdownButton<String>(
-                  value: 'January',
+                  value: _selectedMonth,
                   dropdownColor: Colors.black,
                   iconEnabledColor: Colors.white,
                   underline: Container(),
@@ -44,7 +51,9 @@ class CustomerManagePage extends StatelessWidget {
                         );
                       }).toList(),
                   onChanged: (String? newValue) {
-                    // Handle month change
+                    setState(() {
+                      _selectedMonth = newValue!;
+                    });
                   },
                 ),
               ],

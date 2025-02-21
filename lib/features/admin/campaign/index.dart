@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
-class ManageCampaignPage extends StatelessWidget {
+class ManageCampaignPage extends StatefulWidget {
+  @override
+  _ManageCampaignPageState createState() => _ManageCampaignPageState();
+}
+
+class _ManageCampaignPageState extends State<ManageCampaignPage> {
   final List<String> campaigns = [
     'Chiến dịch 1',
     'Chiến dịch 2',
