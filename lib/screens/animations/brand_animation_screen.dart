@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/screens/animations/brand_animation_logic.dart';
 import 'package:mobile_electrical_preorder_system/screens/animations/brand_animation_widget.dart';
 import 'package:mobile_electrical_preorder_system/layouts/main_layout.dart';
-import 'package:mobile_electrical_preorder_system/features/home/home_page.dart';
+import 'package:mobile_electrical_preorder_system/features/home/index.dart';
 
 class BrandAnimationScreen extends StatefulWidget {
   @override

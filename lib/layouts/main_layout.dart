@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mobile_electrical_preorder_system/features/settings/index.dart';
 
 class MainLayout extends StatefulWidget {
   final Widget child;
@@ -10,30 +11,42 @@ class MainLayout extends StatefulWidget {
   _MainLayoutState createState() => _MainLayoutState();
 }
 
-class _MainLayoutState extends State<MainLayout> {
+class _MainLayoutState extends State<MainLayout> with WidgetsBindingObserver {
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadSelectedIndex();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    // Ensure any other resources are disposed of here
+    super.dispose();
   }
 
   Future<void> _loadSelectedIndex() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _selectedIndex = prefs.getInt('selectedIndex') ?? 0;
-    });
+    if (mounted) {
+      setState(() {
+        _selectedIndex = prefs.getInt('selectedIndex') ?? 0;
+      });
+    }
   }
 
   void _onItemTapped(int index) async {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (mounted) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('selectedIndex', index);
 
-    // Xử lý điều hướng đến các trang khác nhau dựa trên chỉ số
+    // Handle navigation to different pages based on the index
     switch (index) {
       case 0:
         Helper.navigateTo(context, '/');
@@ -54,41 +67,43 @@ class _MainLayoutState extends State<MainLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: RichText(
-          text: TextSpan(
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Elec',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                color: Colors.black,
+              ),
             ),
-            children: [
-              TextSpan(
-                text: 'Elec',
-                style: TextStyle(color: Colors.black),
+            Text(
+              'ee',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                color: Colors.red,
               ),
-              TextSpan(
-                text: 'ee',
-                style: TextStyle(color: Colors.red),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-              icon: const Icon(Icons.notifications, color: Colors.black),
-              onPressed: () {}),
-          IconButton(
-            icon: const Icon(Icons.settings, color: Colors.black),
+            icon: const Icon(
+              Icons.notifications,
+              color: Colors.black,
+              size: 30,
+            ),
+            padding: EdgeInsets.only(right: 25.0),
             onPressed: () {},
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          widget.child,
-        ],
-      ),
+      drawer: SettingsDrawer(),
+      body: Stack(children: [widget.child]),
       bottomNavigationBar: Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -148,8 +163,10 @@ class _MainLayoutState extends State<MainLayout> {
             FloatingActionButton(
               onPressed: () {},
               backgroundColor: const Color.fromARGB(255, 248, 147, 147),
-              child: const Icon(Icons.shopping_cart,
-                  color: Color.fromARGB(255, 255, 255, 255)),
+              child: const Icon(
+                Icons.shopping_cart,
+                color: Color.fromARGB(255, 255, 255, 255),
+              ),
             ),
             Positioned(
               right: 0,
@@ -160,16 +177,10 @@ class _MainLayoutState extends State<MainLayout> {
                   color: Colors.red,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                constraints: BoxConstraints(
-                  minWidth: 20,
-                  minHeight: 20,
-                ),
+                constraints: BoxConstraints(minWidth: 20, minHeight: 20),
                 child: Text(
                   '1',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 12),
                   textAlign: TextAlign.center,
                 ),
               ),

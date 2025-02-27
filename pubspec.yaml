@@ -1,9 +1,8 @@
 name: mobile_electrical_preorder_system
-description: "Mobile Electrical Preorder System"
+description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -20,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.6.2
+  sdk: ^3.7.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -31,17 +30,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  shared_preferences: ^2.2.3
+  fl_chart: ^0.65.0
   dio: ^5.7.0
   go_router: ^14.8.0
-  shared_preferences: ^2.3.3
-  lottie: ^1.2.1
-  flutter_svg: ^1.0.0
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  flutter_svg: ^2.0.15
   cupertino_icons: ^1.0.8
   flutter_launcher_icons: ^0.14.3
-  rename: ^3.0.2
+  uuid: ^3.0.7
+  url_launcher: ^6.2.4
+  firebase_messaging: ^15.2.3
 
 dev_dependencies:
   flutter_test:
@@ -59,7 +57,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -70,14 +67,6 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/animations/
-
-flutter_icons:
-  android: true
-  ios: true
-  image_path: "assets/images/logo.jpg" # Đường dẫn đến file icon
-  adaptive_icon_background: "#ffffff" # Nền cho icon Android adaptive (tuỳ chọn)
-  adaptive_icon_foreground: "assets/images/logo.jpg" # Foreground icon Android adaptive (tuỳ chọn)
-
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -93,16 +82,16 @@ flutter_icons:
   fonts:
     - family: Poppins
       fonts:
-        - asset: fonts/Poppins-Regular.ttf
         - asset: fonts/Poppins-Bold.ttf
+        - asset: fonts/Poppins-Medium.ttf
+          style: italic
+    - family: Roboto
 
-          weight: 700
-    - family: Poppins
-      fonts:
-        - asset: fonts/Poppins-Regular.ttf
-        - asset: fonts/Poppins-Bold.ttf
-          weight: 700
-  #
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/Tham-Nho/Tham1.jpg" # Đường dẫn đến file icon
+  adaptive_icon_background: "#ffffff" # Nền cho icon Android adaptive (tuỳ chọn)
+  adaptive_icon_foreground: "assets/images/Tham-Nho/Tham1.jpg" # Foreground icon Android adaptive (tuỳ chọn)
   # For details regarding fonts from package dependencies,
-
   # see https://flutter.dev/to/font-from-package

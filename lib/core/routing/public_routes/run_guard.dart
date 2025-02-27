@@ -1,9 +1,0 @@
-import 'package:go_router/go_router.dart';
-import 'guard_public_route.dart';
-
-// run public routes - with main layout
-List<GoRoute> createPublicRoutes(List<Map<String, dynamic>> routes) {
-  return routes.map((route) {
-    return mainGuardRoute(route['path'], route['page']);
-  }).toList();
-}
