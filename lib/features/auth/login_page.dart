@@ -103,7 +103,11 @@ class _LoginPageState extends State<LoginPage> {
                 ), // 20% of the screen height
                 Text(
                   'Đăng nhập',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
                 ),
                 SizedBox(height: 32),
                 _buildConstrainedTextField(
@@ -327,11 +331,11 @@ class _LoginPageState extends State<LoginPage> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Colors.red),
+            borderSide: BorderSide(color: Colors.black),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Colors.red),
+            borderSide: BorderSide(color: Colors.black),
           ),
           suffixIcon: suffixIcon,
         ),
