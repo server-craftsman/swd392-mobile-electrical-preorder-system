@@ -10,6 +10,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await getDeviceToken();
+  // await getInstallationId();
   runApp(const InitialAnimationApp());
 }
 
@@ -44,5 +45,10 @@ class MyApp extends StatelessWidget {
 Future<void> getDeviceToken() async {
   String? token = await FirebaseMessaging.instance.getToken();
   print('FCM Token: $token');
-  // Lưu token này lên server hoặc dùng để test gửi thông báo
 }
+
+// Future<void> getInstallationId() async {
+//   String? installationId = await FirebaseAppInstallations.instance.getId();
+//   print('Installation ID: $installationId');
+//   // Lưu installationId này lên server hoặc dùng để test
+// }

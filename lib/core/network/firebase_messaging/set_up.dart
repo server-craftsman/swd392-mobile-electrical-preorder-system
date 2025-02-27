@@ -1,11 +1,15 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-
 class FirebaseMessagingSetup {
   static Future<void> setupFirebaseMessaging() async {
     await FirebaseMessaging.instance.getToken().then((token) {
       print('FCM Token: $token');
     });
   }
+
+  // static Future<void> setupInstallationId() async {
+  //   String? installationId = await FirebaseInstallations.instance.getId();
+  //   print('Installation ID: $installationId');
+  // }
 
   static Future<void> setupFirebaseMessagingBackgroundHandler() async {
     FirebaseMessaging.onBackgroundMessage((RemoteMessage message) async {
