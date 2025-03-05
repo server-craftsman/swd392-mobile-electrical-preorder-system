@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/network/campaign/campaign.network.dart';
 import 'package:mobile_electrical_preorder_system/core/network/campaign/res/index.dart';
+import 'partials/create_campaign.dart';
 
 class ManageCampaignPage extends StatefulWidget {
   @override
@@ -16,18 +17,48 @@ class _ManageCampaignPageState extends State<ManageCampaignPage> {
     _campaignsFuture = CampaignNetwork.getCampaignList();
   }
 
+  void _refreshCampaigns() {
+    setState(() {
+      _campaignsFuture = CampaignNetwork.getCampaignList();
+    });
+  }
+
+  void _showCreateCampaignDialog() {
+    showDialog(
+      context: context,
+      builder:
+          (dialogContext) => CreateCampaignDialog(
+            onCampaignCreated: () {
+              // Refresh the campaign list
+              setState(() {
+                _campaignsFuture = CampaignNetwork.getCampaignList();
+              });
+
+              // Use a post-frame callback to ensure the Scaffold is available
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Campaign created successfully')),
+                  );
+                }
+              });
+            },
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Quản lý chiến dịch'),
         backgroundColor: Color.fromARGB(255, 0, 0, 0),
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     Navigator.pop(context);
-        //   },
-        // ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: FutureBuilder<CampaignResponse>(
         future: _campaignsFuture,
@@ -51,10 +82,7 @@ class _ManageCampaignPageState extends State<ManageCampaignPage> {
             itemBuilder: (context, index) {
               final campaign = campaigns[index];
               return ListTile(
-                title: Text(
-                  campaign.name,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                title: Text(campaign.name),
                 subtitle: Text(
                   '${campaign.startDate.toString()} - ${campaign.endDate.toString()}',
                 ),
@@ -81,9 +109,7 @@ class _ManageCampaignPageState extends State<ManageCampaignPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Implement add campaign functionality
-        },
+        onPressed: _showCreateCampaignDialog,
         hoverColor: Colors.black,
         child: Icon(Icons.add),
         backgroundColor: Colors.white,

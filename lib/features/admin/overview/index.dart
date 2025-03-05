@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_electrical_preorder_system/core/network/product/product_network.dart'; // Import ProductNetwork
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -6,6 +7,15 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  late Future<int> _productCountFuture; // Declare a Future for product count
+
+  @override
+  void initState() {
+    super.initState();
+    _productCountFuture =
+        ProductNetwork.countProduct(); // Initialize the Future
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +31,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 SizedBox(height: 20),
                 _buildUpdateCard(),
                 SizedBox(height: 20),
-                _buildMetricsRow(context),
+                _buildProductCount(), // Replace _buildMetricsRow with _buildProductCount
                 SizedBox(height: 20),
                 _buildTransactionList(),
               ],
@@ -29,6 +39,40 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildProductCount() {
+    return FutureBuilder<int>(
+      future: _productCountFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        return Card(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Số lượng sản phẩm', style: TextStyle(fontSize: 16)),
+                SizedBox(height: 10),
+                Text(
+                  '${snapshot.data}',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
