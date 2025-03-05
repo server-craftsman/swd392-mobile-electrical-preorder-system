@@ -16,10 +16,10 @@ import 'package:mobile_electrical_preorder_system/features/auth/sign_up_page.dar
 // import 'package:mobile_electrical_preorder_system/features/admin/order/index.dart';
 
 //manager
-import 'package:mobile_electrical_preorder_system/features/manager/overview/index.dart';
-import 'package:mobile_electrical_preorder_system/features/manager/statistic/index.dart';
-import 'package:mobile_electrical_preorder_system/features/manager/customer/index.dart';
-import 'package:mobile_electrical_preorder_system/features/manager/order/index.dart';
+// import 'package:mobile_electrical_preorder_system/features/staff/overview/index.dart';
+// import 'package:mobile_electrical_preorder_system/features/staff/statistic/index.dart';
+// import 'package:mobile_electrical_preorder_system/features/staff/customer/index.dart';
+// import 'package:mobile_electrical_preorder_system/features/staff/order/index.dart';
 
 List<GoRoute> publicRoutes = createPublicRoutes([
   {'path': '/home', 'page': HomePage()},

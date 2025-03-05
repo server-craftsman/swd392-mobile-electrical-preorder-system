@@ -7,14 +7,14 @@ import 'package:mobile_electrical_preorder_system/features/admin/user/index.dart
 import 'package:mobile_electrical_preorder_system/features/admin/order/index.dart';
 import 'package:mobile_electrical_preorder_system/features/profile/profile_page.dart';
 
-//manager
-import 'package:mobile_electrical_preorder_system/features/manager/overview/index.dart';
-import 'package:mobile_electrical_preorder_system/features/manager/statistic/index.dart';
-import 'package:mobile_electrical_preorder_system/features/manager/customer/index.dart';
-import 'package:mobile_electrical_preorder_system/features/manager/order/index.dart';
+//staff
+import 'package:mobile_electrical_preorder_system/features/staff/overview/index.dart';
+import 'package:mobile_electrical_preorder_system/features/staff/statistic/index.dart';
+import 'package:mobile_electrical_preorder_system/features/staff/customer/index.dart';
+import 'package:mobile_electrical_preorder_system/features/staff/order/index.dart';
 
 //admin routes
-List<GoRoute> adminRoutes = createProtectedRoutes([
+List<GoRoute> adminRoutes = createAdminProtectedRoutes([
   {'path': '/admin/dashboard', 'page': DashboardPage()},
   {'path': '/admin/campaigns', 'page': ManageCampaignPage()},
   {'path': '/admin/users', 'page': CustomerManagePage()},
@@ -24,9 +24,9 @@ List<GoRoute> adminRoutes = createProtectedRoutes([
 ]);
 
 //manager routes
-List<GoRoute> managerRoutes = createProtectedRoutes([
-  {'path': '/manager/overview', 'page': OverviewPage()},
-  {'path': '/manager/statistic', 'page': StatisticPage()},
-  {'path': '/manager/customer', 'page': CustomerManagerPage()},
-  {'path': '/manager/orders', 'page': ManagerOrdersPage()},
+List<GoRoute> staffRoutes = createStaffProtectedRoutes([
+  {'path': '/staff/overview', 'page': OverviewPage()},
+  {'path': '/staff/statistic', 'page': StatisticPage()},
+  {'path': '/staff/customer', 'page': CustomerManagerPage()},
+  {'path': '/staff/orders', 'page': ManagerOrdersPage()},
 ]);

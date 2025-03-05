@@ -266,9 +266,8 @@ class _LoginPageState extends State<LoginPage> {
               Helper.navigateTo(context, '/admin/dashboard');
               break;
             case 'ROLE_STAFF':
-              Helper.navigateTo(context, '/home');
+              Helper.navigateTo(context, '/staff/overview');
               break;
-            // Add more roles and their corresponding routes as needed
             default:
               Helper.navigateTo(context, '/');
               break;

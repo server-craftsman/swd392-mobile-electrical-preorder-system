@@ -4,19 +4,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile_electrical_preorder_system/core/middleware/token_middleware.dart';
 
 // Pages
-import 'package:mobile_electrical_preorder_system/features/manager/overview/index.dart';
-import 'package:mobile_electrical_preorder_system/features/manager/statistic/index.dart';
-import 'package:mobile_electrical_preorder_system/features/manager/customer/index.dart';
-import 'package:mobile_electrical_preorder_system/features/manager/order/index.dart';
+import 'package:mobile_electrical_preorder_system/features/staff/overview/index.dart';
+import 'package:mobile_electrical_preorder_system/features/staff/statistic/index.dart';
+import 'package:mobile_electrical_preorder_system/features/staff/customer/index.dart';
+import 'package:mobile_electrical_preorder_system/features/staff/order/index.dart';
 
-class ManagerLayout extends StatefulWidget {
+class StaffLayout extends StatefulWidget {
+  final Widget child;
+
+  const StaffLayout({Key? key, required this.child}) : super(key: key);
+
   @override
   _ManagerLayoutState createState() => _ManagerLayoutState();
 }
 
-class _ManagerLayoutState extends State<ManagerLayout> {
+class _ManagerLayoutState extends State<StaffLayout> {
   int _selectedIndex = 0;
-  String _fullName = 'Manager';
+  String _fullName = 'Staff';
+  Widget get child => _pages[_selectedIndex];
 
   final List<Widget> _pages = [
     OverviewPage(),
@@ -86,7 +91,7 @@ class _ManagerLayoutState extends State<ManagerLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: IndexedStack(index: _selectedIndex, children: _pages),
+      body: child, // Use the child widget here instead of IndexedStack
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
@@ -119,7 +124,7 @@ class _ManagerLayoutState extends State<ManagerLayout> {
         if (value == 'logout') {
           _logout();
         } else if (value == 'profile') {
-          Helper.navigateTo(context, '/manager/profile');
+          Helper.navigateTo(context, '/staff/profile');
         }
       },
       itemBuilder:

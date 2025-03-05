@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_electrical_preorder_system/core/network/campaign/campaign.network.dart';
+import 'package:mobile_electrical_preorder_system/core/network/campaign/res/index.dart';
 
 class ManageCampaignPage extends StatefulWidget {
   @override
@@ -6,11 +8,13 @@ class ManageCampaignPage extends StatefulWidget {
 }
 
 class _ManageCampaignPageState extends State<ManageCampaignPage> {
-  final List<String> campaigns = [
-    'Chiến dịch 1',
-    'Chiến dịch 2',
-    'Chiến dịch 3',
-  ];
+  late Future<CampaignResponse> _campaignsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _campaignsFuture = CampaignNetwork.getCampaignList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,35 +22,61 @@ class _ManageCampaignPageState extends State<ManageCampaignPage> {
       appBar: AppBar(
         title: Text('Quản lý chiến dịch'),
         backgroundColor: Color.fromARGB(255, 0, 0, 0),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back),
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        // ),
       ),
-      body: ListView.builder(
-        itemCount: campaigns.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(campaigns[index]),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    // Implement edit functionality
-                  },
+      body: FutureBuilder<CampaignResponse>(
+        future: _campaignsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          if (!snapshot.hasData || snapshot.data!.data.content.isEmpty) {
+            return Center(child: Text('No campaigns available'));
+          }
+
+          final campaigns = snapshot.data!.data.content;
+
+          return ListView.builder(
+            itemCount: campaigns.length,
+            itemBuilder: (context, index) {
+              final campaign = campaigns[index];
+              return ListTile(
+                title: Text(
+                  campaign.name,
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    // Implement delete functionality
-                  },
+                subtitle: Text(
+                  '${campaign.startDate.toString()} - ${campaign.endDate.toString()}',
                 ),
-              ],
-            ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        // Implement edit functionality
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        // Implement delete functionality
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
           );
         },
       ),
