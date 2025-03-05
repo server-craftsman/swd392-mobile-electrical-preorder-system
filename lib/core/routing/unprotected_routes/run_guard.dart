@@ -19,9 +19,3 @@ List<GoRoute> createNullRoutes(List<Map<String, dynamic>> routes) {
     return nullGuardRoute(route['path'], route['page']);
   }).toList();
 }
-
-List<GoRoute> createAdminRoutes(List<Map<String, dynamic>> routes) {
-  return routes.map((route) {
-    return adminGuardRoute(route['path'], route['page']);
-  }).toList();
-}

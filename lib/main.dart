@@ -5,12 +5,15 @@ import 'package:mobile_electrical_preorder_system/core/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:mobile_electrical_preorder_system/core/network/firebase_messaging/set_up.dart';
+import 'package:firebase_app_installations/firebase_app_installations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await getDeviceToken();
-  // await getInstallationId();
+  // await FirebaseMessagingService().init();
+  await getInstallationId();
+
   runApp(const InitialAnimationApp());
 }
 
@@ -47,8 +50,8 @@ Future<void> getDeviceToken() async {
   print('FCM Token: $token');
 }
 
-// Future<void> getInstallationId() async {
-//   String? installationId = await FirebaseAppInstallations.instance.getId();
-//   print('Installation ID: $installationId');
-//   // Lưu installationId này lên server hoặc dùng để test
-// }
+Future<void> getInstallationId() async {
+  String? installationId = await FirebaseInstallations.instance.getId();
+  print('Installation ID: $installationId');
+  // Lưu installationId này lên server hoặc dùng để test
+}

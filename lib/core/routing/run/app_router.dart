@@ -4,13 +4,14 @@ import 'package:mobile_electrical_preorder_system/core/routing/protected_routes/
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    // initialLocation: '/',
+    initialLocation: '/',
     routes: [
       ...firstRoutes,
       ...nullRoutes,
       // ...adminRoutes,
-      ...publicRoutes,
+      // ...publicRoutes,
       ...adminRoutes,
+      ...staffRoutes,
     ],
   );
 }

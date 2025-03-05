@@ -150,25 +150,25 @@ class _CustomWelcomePageState extends State<CustomWelcomePage>
                                 ),
                                 SizedBox(height: 16),
                                 Divider(),
+                                // ListTile(
+                                //   title: Text("Không có tài khoản"),
+                                //   trailing: TextButton(
+                                //     onPressed: () {
+                                //       if (mounted) {
+                                //         Helper.navigateTo(context, '/signup');
+                                //       }
+                                //     },
+                                //     child: Text(
+                                //       'Đăng ký',
+                                //       style: TextStyle(
+                                //         color: Colors.blue,
+                                //         fontWeight: FontWeight.bold,
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
                                 ListTile(
-                                  title: Text("Không có tài khoản"),
-                                  trailing: TextButton(
-                                    onPressed: () {
-                                      if (mounted) {
-                                        Helper.navigateTo(context, '/signup');
-                                      }
-                                    },
-                                    child: Text(
-                                      'Đăng ký',
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                ListTile(
-                                  title: Text('Đã có tài khoản'),
+                                  title: Text('Vui lòng đăng nhập để tiếp tục'),
                                   trailing: TextButton(
                                     onPressed: () {
                                       if (mounted) {
