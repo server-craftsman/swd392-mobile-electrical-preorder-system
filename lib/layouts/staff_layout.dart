@@ -6,7 +6,7 @@ import 'package:mobile_electrical_preorder_system/core/middleware/token_middlewa
 // Pages
 import 'package:mobile_electrical_preorder_system/features/staff/overview/index.dart';
 import 'package:mobile_electrical_preorder_system/features/staff/statistic/index.dart';
-import 'package:mobile_electrical_preorder_system/features/staff/customer/index.dart';
+import 'package:mobile_electrical_preorder_system/features/staff/product/index.dart';
 import 'package:mobile_electrical_preorder_system/features/staff/order/index.dart';
 
 class StaffLayout extends StatefulWidget {
@@ -26,7 +26,7 @@ class _ManagerLayoutState extends State<StaffLayout> {
   final List<Widget> _pages = [
     OverviewPage(),
     StatisticPage(),
-    CustomerManagerPage(),
+    ProductManagementPage(),
     ManagerOrdersPage(),
   ];
 

@@ -10,7 +10,7 @@ import 'package:mobile_electrical_preorder_system/features/profile/profile_page.
 //staff
 import 'package:mobile_electrical_preorder_system/features/staff/overview/index.dart';
 import 'package:mobile_electrical_preorder_system/features/staff/statistic/index.dart';
-import 'package:mobile_electrical_preorder_system/features/staff/customer/index.dart';
+import 'package:mobile_electrical_preorder_system/features/staff/product/index.dart';
 import 'package:mobile_electrical_preorder_system/features/staff/order/index.dart';
 
 //admin routes
@@ -27,6 +27,6 @@ List<GoRoute> adminRoutes = createAdminProtectedRoutes([
 List<GoRoute> staffRoutes = createStaffProtectedRoutes([
   {'path': '/staff/overview', 'page': OverviewPage()},
   {'path': '/staff/statistic', 'page': StatisticPage()},
-  {'path': '/staff/customer', 'page': CustomerManagerPage()},
+  {'path': '/staff/product', 'page': ProductManagementPage()},
   {'path': '/staff/orders', 'page': ManagerOrdersPage()},
 ]);
