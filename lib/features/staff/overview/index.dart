@@ -10,7 +10,7 @@ class OverviewPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Dashboard',
-          style: GoogleFonts.playfairDisplay(
+          style: GoogleFonts.montserrat(
             fontSize: 24,
             fontWeight: FontWeight.bold,
             color: Colors.white,

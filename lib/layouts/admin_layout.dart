@@ -93,17 +93,63 @@ class _AdminLayoutState extends State<AdminLayout> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      title: Text(
-        'Xin chào, $_fullName',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-          color: Colors.black,
-        ),
+      title: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Color(0xFF1A237E).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.electric_bolt,
+              color: Color(0xFF1A237E),
+              size: 24,
+            ),
+          ),
+          SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Xin chào,',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                _fullName,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Color(0xFF1A237E),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       backgroundColor: Colors.white,
-      elevation: 0,
-      actions: [_buildPopupMenu()],
+      elevation: 2,
+      shadowColor: Colors.black.withOpacity(0.1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(16),
+          bottomRight: Radius.circular(16),
+        ),
+      ),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.notifications_outlined, color: Color(0xFF1A237E)),
+          onPressed: () {
+            // Handle notifications
+          },
+        ),
+        _buildPopupMenu(),
+        SizedBox(width: 8),
+      ],
     );
   }
 
@@ -111,15 +157,20 @@ class _AdminLayoutState extends State<AdminLayout> {
     return PopupMenuButton<String>(
       offset: Offset(0, 60),
       icon: CircleAvatar(
-        backgroundColor: Colors.black,
-        child: Text(_fullName[0], style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFF1A237E),
+        child: Text(
+          _fullName[0].toUpperCase(),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
       ),
       color: Colors.white,
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       onSelected: (value) {
         if (value == 'logout') {
           _logout();
         } else if (value == 'profile') {
-          Helper.navigateTo(context, '/admin/profile');
+          Helper.navigateTo(context, '/staff/profile');
         }
       },
       itemBuilder:
@@ -127,16 +178,28 @@ class _AdminLayoutState extends State<AdminLayout> {
             PopupMenuItem(
               value: 'profile',
               child: ListTile(
-                leading: Icon(Icons.account_circle),
-                title: Text('Thông tin tài khoản'),
+                leading: Icon(Icons.account_circle, color: Color(0xFF1A237E)),
+                title: Text(
+                  'Thông tin tài khoản',
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                contentPadding: EdgeInsets.zero,
+                dense: true,
               ),
             ),
             PopupMenuItem(
               value: 'logout',
               child: ListTile(
-                leading: Icon(Icons.logout),
-                title: Text('Đăng xuất'),
-                textColor: Colors.red,
+                leading: Icon(Icons.logout, color: Colors.red),
+                title: Text(
+                  'Đăng xuất',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                contentPadding: EdgeInsets.zero,
+                dense: true,
               ),
             ),
           ],
@@ -154,7 +217,7 @@ class _AdminLayoutState extends State<AdminLayout> {
         type: BottomNavigationBarType.fixed,
         showUnselectedLabels: false,
         showSelectedLabels: true,
-        selectedItemColor: Colors.redAccent,
+        selectedItemColor: Color(0xFF1A237E),
         unselectedItemColor: Colors.white,
         backgroundColor: Colors.transparent,
         selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),

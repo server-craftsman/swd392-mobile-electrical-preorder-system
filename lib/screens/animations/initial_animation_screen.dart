@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'animation_origin.dart'; // Import your existing animation
-import 'package:mobile_electrical_preorder_system/main.dart'; // Import the main.dart file
+import 'animation_origin.dart';
+import 'package:mobile_electrical_preorder_system/main.dart';
 
 class InitialAnimationScreen extends StatefulWidget {
   @override
@@ -15,13 +15,33 @@ class _InitialAnimationScreenState extends State<InitialAnimationScreen>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 2500),
       vsync: this,
-    )..forward().whenComplete(() {
+    );
+
+    // Start animation and navigate after completion
+    _animationController.forward();
+
+    // Add a delay before navigation to allow users to see the animation
+    Future.delayed(Duration(milliseconds: 3200), () {
+      if (mounted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const MyApp()),
+          PageRouteBuilder(
+            pageBuilder:
+                (context, animation, secondaryAnimation) => const MyApp(),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            transitionDuration: Duration(milliseconds: 800),
+          ),
         );
-      });
+      }
+    });
   }
 
   @override
@@ -32,8 +52,6 @@ class _InitialAnimationScreenState extends State<InitialAnimationScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FirstAnimation(animation: _animationController),
-    );
+    return Scaffold(body: FirstAnimation(animation: _animationController));
   }
 }

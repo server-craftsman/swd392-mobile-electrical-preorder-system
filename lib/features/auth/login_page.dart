@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
 import 'package:mobile_electrical_preorder_system/core/network/auth/auth_network.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:mobile_electrical_preorder_system/core/middleware/token_middleware.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,7 +9,8 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage>
+    with SingleTickerProviderStateMixin {
   final AuthNetwork _authNetwork = AuthNetwork();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -19,32 +19,41 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true;
   bool _rememberMe = false;
 
+  // Animation controllers
+  late AnimationController _animationController;
+  Animation<double>? _fadeAnimation; // Changed to nullable
+  late Animation<Offset> _slideAnimation;
+
   @override
   void initState() {
     super.initState();
     _loadCredentials();
+
+    // Initialize animations
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Interval(0.0, 0.8, curve: Curves.easeIn),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: Offset(0.0, 0.2),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(0.2, 1.0, curve: Curves.easeOutQuint),
+      ),
+    );
+
+    _animationController.forward();
   }
 
-  void _loadCredentials() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _usernameController.text = prefs.getString('username') ?? '';
-      _passwordController.text = prefs.getString('password') ?? '';
-      _rememberMe = prefs.getBool('rememberMe') ?? false;
-    });
-  }
-
-  void _saveCredentials() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (_rememberMe) {
-      await prefs.setString('username', _usernameController.text);
-      await prefs.setString('password', _passwordController.text);
-    } else {
-      await prefs.remove('username');
-      await prefs.remove('password');
-    }
-    await prefs.setBool('rememberMe', _rememberMe);
-  }
+  // ... existing methods for credentials ...
 
   @override
   void dispose() {
@@ -52,172 +61,370 @@ class _LoginPageState extends State<LoginPage> {
     _passwordController.dispose();
     _usernameFocus.dispose();
     _passwordFocus.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.grey),
-            onPressed: () {
-              Helper.navigateTo(context, '/');
-            },
-          ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.asset('assets/images/logo.jpg', height: 40),
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Gradient Background
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF1A237E), // Deep indigo
+                  Color(0xFF303F9F), // Indigo
+                  Color(0xFF3949AB), // Lighter indigo
+                ],
               ),
-              SizedBox(width: 8),
-              Text('Elecee', style: TextStyle(color: Colors.black)),
-            ],
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.more_horiz_outlined, color: Colors.grey),
-              onPressed: () {
-                Helper.navigateTo(context, '/setting');
-              },
             ),
-          ],
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        body: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.2,
-                ), // 20% of the screen height
-                Text(
-                  'Đăng nhập',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ),
+          ),
+
+          // Decorative elements
+          Positioned(
+            top: -50,
+            right: -50,
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.05),
+              ),
+            ),
+          ),
+
+          Positioned(
+            bottom: 150,
+            left: -100,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.05),
+              ),
+            ),
+          ),
+
+          // Back button
+          Positioned(
+            top: 40,
+            left: 16,
+            child: SafeArea(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                SizedBox(height: 32),
-                _buildConstrainedTextField(
-                  'Username',
-                  'Nhập username của bạn',
-                  controller: _usernameController,
-                  focusNode: _usernameFocus,
-                  textInputAction: TextInputAction.next,
-                  onSubmitted: (_) {
-                    FocusScope.of(context).requestFocus(_passwordFocus);
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    Navigator.of(context).pushReplacementNamed('/');
                   },
+                  tooltip: 'Quay về trang chủ',
                 ),
-                SizedBox(height: 16),
-                _buildConstrainedTextField(
-                  'Mật khẩu',
-                  'Nhập mật khẩu của bạn',
-                  obscureText: _obscurePassword,
-                  controller: _passwordController,
-                  focusNode: _passwordFocus,
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (_) {
-                    _handleLogin();
-                  },
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ),
+            ),
+          ),
+
+          // Main content
+          SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _rememberMe,
-                          onChanged: (value) {
-                            setState(() {
-                              _rememberMe = value ?? false;
-                            });
-                          },
-                          activeColor:
-                              Colors.black, // Set the active color to red
+                    SizedBox(height: 40),
+                    // Logo and app name
+                    FadeTransition(
+                      opacity:
+                          _fadeAnimation ?? const AlwaysStoppedAnimation(1.0),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 15,
+                                    spreadRadius: 2,
+                                    offset: Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(50),
+                                child: Container(
+                                  padding: EdgeInsets.all(3),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.6),
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: ClipOval(
+                                    child: Image.asset(
+                                      'assets/images/logo.jpg',
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              'Đăng nhập',
+                              style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                letterSpacing: 0.5,
+                                shadows: [
+                                  Shadow(
+                                    offset: Offset(1, 1),
+                                    blurRadius: 3,
+                                    color: Colors.black.withOpacity(0.3),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              'Chào mừng bạn quay trở lại',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.white.withOpacity(0.8),
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text('Remember me'),
-                      ],
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Text(
-                        'Khôi phục mật khẩu',
-                        style: TextStyle(color: Colors.blue),
                       ),
                     ),
+
+                    SizedBox(height: 40),
+
+                    // Login form
+                    SlideTransition(
+                      position: _slideAnimation,
+                      child: Container(
+                        padding: EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 20,
+                              spreadRadius: 5,
+                              offset: Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildTextField(
+                              'Tên đăng nhập',
+                              Icons.person_outline,
+                              controller: _usernameController,
+                              focusNode: _usernameFocus,
+                              textInputAction: TextInputAction.next,
+                              onSubmitted: (_) {
+                                FocusScope.of(
+                                  context,
+                                ).requestFocus(_passwordFocus);
+                              },
+                            ),
+                            SizedBox(height: 20),
+                            _buildTextField(
+                              'Mật khẩu',
+                              Icons.lock_outline,
+                              controller: _passwordController,
+                              focusNode: _passwordFocus,
+                              obscureText: _obscurePassword,
+                              textInputAction: TextInputAction.done,
+                              onSubmitted: (_) {
+                                _handleLogin();
+                              },
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_outlined
+                                      : Icons.visibility_off_outlined,
+                                  color: Color(0xFF1A237E),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                              ),
+                            ),
+
+                            SizedBox(height: 16),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: Checkbox(
+                                        value: _rememberMe,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _rememberMe = value ?? false;
+                                          });
+                                        },
+                                        activeColor: Color(0xFF1A237E),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Ghi nhớ đăng nhập',
+                                      style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                TextButton(
+                                  onPressed: () {},
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size(0, 0),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  child: Text(
+                                    'Quên mật khẩu?',
+                                    style: TextStyle(
+                                      color: Color(0xFF1A237E),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            SizedBox(height: 30),
+
+                            // Login button
+                            Container(
+                              width: double.infinity,
+                              height: 55,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color(0xFF1A237E),
+                                    Color(0xFF3949AB),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0xFF1A237E).withOpacity(0.3),
+                                    blurRadius: 10,
+                                    offset: Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(15),
+                                  onTap: _handleLogin,
+                                  child: Center(
+                                    child: Text(
+                                      'Đăng nhập',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 30),
                   ],
                 ),
-                SizedBox(height: 32),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _handleLogin,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                    ),
-                    child: Text(
-                      'Đăng nhập',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ),
-                ),
-                // SizedBox(height: 16),
-                // Text('Đăng nhập với tài khoản mạng xã hội'),
-                // SizedBox(height: 16),
-                // _buildSocialIcons(context),
-                // SizedBox(height: 32),
-                // GestureDetector(
-                //   onTap: () {
-                //     Helper.navigateTo(context, '/signup');
-                //   },
-                //   child: Text.rich(
-                //     TextSpan(
-                //       text: 'Bạn chưa có tài khoản? ',
-                //       children: [
-                //         TextSpan(
-                //           text: 'Đăng ký tài khoản',
-                //           style: TextStyle(color: Colors.blue),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-                SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
-              ],
+              ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+    String hint,
+    IconData icon, {
+    bool obscureText = false,
+    TextEditingController? controller,
+    FocusNode? focusNode,
+    TextInputAction? textInputAction,
+    Function(String)? onSubmitted,
+    Widget? suffixIcon,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+      ),
+      child: TextField(
+        controller: controller,
+        focusNode: focusNode,
+        obscureText: obscureText,
+        textInputAction: textInputAction,
+        onSubmitted: onSubmitted,
+        style: TextStyle(fontSize: 16),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: TextStyle(color: Colors.grey),
+          prefixIcon: Icon(icon, color: Color(0xFF1A237E)),
+          suffixIcon: suffixIcon,
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(vertical: 18),
         ),
       ),
     );
   }
 
+  // Keep the existing _handleLogin method
   Future<void> _handleLogin() async {
+    // Your existing login logic
     try {
       if (_usernameController.text.isEmpty ||
           _passwordController.text.isEmpty) {
@@ -286,123 +493,64 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.',
+              'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.',
+              style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
           ),
         );
       }
     } catch (e) {
-      print('Error during login: $e');
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      print('Login error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Có lỗi xảy ra. Vui lòng thử lại sau.'),
+          content: Text(
+            'Có lỗi xảy ra. Vui lòng thử lại sau.',
+            style: TextStyle(color: Colors.white),
+          ),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
         ),
       );
     }
   }
 
-  Widget _buildConstrainedTextField(
-    String label,
-    String hint, {
-    bool obscureText = false,
-    TextEditingController? controller,
-    FocusNode? focusNode,
-    TextInputAction? textInputAction,
-    Function(String)? onSubmitted,
-    Widget? suffixIcon,
-  }) {
-    return SizedBox(
-      width: double.infinity,
-      child: TextField(
-        controller: controller,
-        focusNode: focusNode,
-        obscureText: obscureText,
-        textInputAction: textInputAction,
-        onSubmitted: onSubmitted,
-        cursorColor: Colors.red,
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: TextStyle(color: Colors.red),
-          hintText: hint,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Colors.black),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Colors.black),
-          ),
-          suffixIcon: suffixIcon,
-        ),
-      ),
-    );
+  Future<void> _loadCredentials() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedUsername = prefs.getString('username');
+      final savedPassword = prefs.getString('password');
+      final savedRememberMe = prefs.getBool('rememberMe');
+
+      if (savedRememberMe == true &&
+          savedUsername != null &&
+          savedPassword != null) {
+        setState(() {
+          _usernameController.text = savedUsername;
+          _passwordController.text = savedPassword;
+          _rememberMe = true;
+        });
+      }
+    } catch (e) {
+      print('Error loading credentials: $e');
+    }
   }
 
-  Widget _buildSocialIcons(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(width: 16),
-        GestureDetector(
-          onTap: () async {
-            try {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    children: [
-                      CircularProgressIndicator(color: Colors.white),
-                      SizedBox(width: 16),
-                      Text('Đang đăng nhập với Google...'),
-                    ],
-                  ),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-
-              final url = await _authNetwork.socialLogin();
-              if (url != null) {
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                final Uri uri = Uri.parse(url);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Không thể mở trình duyệt'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              }
-            } catch (e) {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.',
-                  ),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            }
-          },
-          child: _buildSocialIcon(
-            Icons.g_mobiledata_sharp,
-            style: TextStyle(color: Colors.red),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSocialIcon(IconData icon, {TextStyle? style}) {
-    return CircleAvatar(
-      backgroundColor: Colors.grey[200],
-      child: Icon(icon, color: style?.color ?? Colors.blue),
-    );
+  Future<void> _saveCredentials() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (_rememberMe) {
+        await prefs.setString('username', _usernameController.text);
+        await prefs.setString('password', _passwordController.text);
+        await prefs.setBool('rememberMe', true);
+      } else {
+        await prefs.remove('username');
+        await prefs.remove('password');
+        await prefs.setBool('rememberMe', false);
+      }
+    } catch (e) {
+      print('Error saving credentials: $e');
+    }
   }
 }
