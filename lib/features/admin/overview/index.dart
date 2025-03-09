@@ -1,333 +1,65 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_electrical_preorder_system/core/network/product/product_network.dart'; // Import ProductNetwork
+import './partials/dashboard.dart';
+import './partials/search.dart' as search_widget;
+import './partials/card_state_less.dart' as card_widget;
+import './partials/transaction.dart' as transaction_widget;
 
 class DashboardPage extends StatefulWidget {
+  const DashboardPage({Key? key}) : super(key: key);
+
   @override
   _DashboardPageState createState() => _DashboardPageState();
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  late Future<int> _productCountFuture; // Declare a Future for product count
-
   @override
   void initState() {
     super.initState();
-    _productCountFuture =
-        ProductNetwork.countProduct(); // Initialize the Future
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          'Dashboard',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.black87,
+        elevation: 0,
+      ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSearchBar(context),
-                SizedBox(height: 20),
-                _buildUpdateCard(),
-                SizedBox(height: 20),
-                _buildProductCount(), // Replace _buildMetricsRow with _buildProductCount
-                SizedBox(height: 20),
-                _buildTransactionList(),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProductCount() {
-    return FutureBuilder<int>(
-      future: _productCountFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-        return Card(
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Số lượng sản phẩm', style: TextStyle(fontSize: 16)),
-                SizedBox(height: 10),
-                Text(
-                  '${snapshot.data}',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildSearchBar(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: SingleChildScrollView(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: constraints.maxWidth),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Tìm kiếm...',
-                  prefixIcon: Icon(Icons.search, color: Colors.red),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide(color: Colors.red),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide(color: Colors.red),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUpdateCard() {
-    return Card(
-      color: Color(0xFF002B1F), // Dark green color
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.circle, color: Colors.red, size: 10),
-                    SizedBox(width: 8),
-                    Text(
-                      'Update',
-                      style: TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                  ],
-                ),
-                Icon(Icons.more_vert, color: Colors.white),
-              ],
+            // Fixed search bar at the top
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
+              child: search_widget.buildSearchBar(context),
             ),
-            SizedBox(height: 10),
-            Text(
-              'Feb 12th 2024',
-              style: TextStyle(color: Colors.white, fontSize: 14),
-            ),
-            SizedBox(height: 10),
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Sales revenue increased ',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextSpan(
-                    text: '40%',
-                    style: TextStyle(
-                      color: Colors.greenAccent,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextSpan(
-                    text: ' in 1 week',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Text(
-                  'See Statistics',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-                Icon(Icons.arrow_right, color: Colors.white),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMetricsRow(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width * 0.45,
-            child: _buildMetricCard(
-              'Net Income',
-              '\$193.000',
-              '+35%',
-              'from last month',
-              Color(0xFF00C853),
-            ),
-          ),
-          SizedBox(width: 16),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.45,
-            child: _buildMetricCard(
-              'Total Return',
-              '\$32.000',
-              '-24%',
-              'from last month',
-              Color(0xFFD50000),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMetricCard(
-    String title,
-    String value,
-    String percentage,
-    String subtitle,
-    Color changeColor,
-  ) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.start,
-          // mainAxisSize: MainAxisSize.min, // Added to prevent overflow
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Expanded(
-                  // Changed from Flexible to Expanded to ensure the text takes available space
-                  child: Text(title, style: TextStyle(fontSize: 16)),
-                ),
-                Icon(Icons.more_horiz, color: Colors.black),
-              ],
-            ),
-            SizedBox(height: 10),
-            Text(
-              value,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Icon(
-                  changeColor == Color(0xFF00C853)
-                      ? Icons.arrow_upward
-                      : Icons.arrow_downward,
-                  color: changeColor,
-                  size: 16,
-                ),
-                SizedBox(width: 4),
-                Expanded(
-                  // Changed from Flexible to Expanded to ensure the text takes available space
-                  child: Row(
+            // Scrollable content below the search bar
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        percentage,
-                        style: TextStyle(fontSize: 14, color: changeColor),
-                      ),
-                      SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          subtitle,
-                          style: TextStyle(fontSize: 14, color: Colors.black),
-                          overflow:
-                              TextOverflow.ellipsis, // Added to handle overflow
-                        ),
-                      ),
+                      const SizedBox(height: 4),
+                      card_widget.buildUpdateCard(),
+                      const SizedBox(height: 20),
+                      const OverviewPage(),
+                      const SizedBox(height: 20),
+                      transaction_widget.buildTransactionList(),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
-              ],
+              ),
             ),
           ],
         ),
       ),
     );
-  }
-
-  Widget _buildTransactionList() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Giao hàng',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 10),
-        _buildTransactionItem(
-          'Tinek Detstar T-Shirt',
-          'Jul 12th 2024',
-          'Completed',
-          Icons.check_circle,
-          Colors.green,
-        ),
-        _buildTransactionItem(
-          'Playstation 5',
-          'Jul 12th 2024',
-          'Pending',
-          Icons.videogame_asset,
-          Colors.orange,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTransactionItem(
-    String title,
-    String date,
-    String status,
-    IconData icon,
-    Color iconColor,
-  ) {
-    return ListTile(
-      leading: Icon(icon, color: iconColor),
-      title: Text(title),
-      subtitle: Text(date),
-      trailing: Text(status),
-    );
-  }
+  }  
 }

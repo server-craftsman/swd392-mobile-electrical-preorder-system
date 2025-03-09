@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'partials/date_selector.dart';
+import 'partials/statistics_cards.dart';
+import 'partials/recent_transactions.dart';
 
 class CustomerManagePage extends StatefulWidget {
   @override
@@ -67,11 +70,11 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildDateSelector(),
+              DateSelector(),
               SizedBox(height: 20),
-              _buildStatistics(),
+              StatisticsCards(),
               SizedBox(height: 1),
-              _buildRecentTransactions(),
+              RecentTransactions(),
               SizedBox(height: 10),
               // Center(
               //   child: ElevatedButton(
@@ -89,186 +92,6 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
               // ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDateSelector() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: BouncingScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          _buildDateItem('Mon', '17', false),
-          _buildDateItem('Tue', '18', false),
-          _buildDateItem('Wed', '20', true),
-          _buildDateItem('Thu', '21', false),
-          _buildDateItem('Fri', '22', false),
-          _buildDateItem('Sat', '23', false),
-          _buildDateItem('Sun', '24', false),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDateItem(String day, String date, bool isSelected) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      child: Column(
-        children: [
-          Text(day, style: TextStyle(color: Colors.grey)),
-          SizedBox(height: 5),
-          Container(
-            width: 30,
-            height: 30,
-            decoration: BoxDecoration(
-              color: isSelected ? Color(0xFF002B1F) : Colors.transparent,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Center(
-              child: Text(
-                date,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.black,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatistics() {
-    return Column(
-      children: [
-        _buildStatisticCardWithIcon(
-          'Tổng doanh thu',
-          '73.820',
-          'Đạt mục tiêu',
-          Icons.donut_large,
-          progress: 0.8,
-        ),
-        SizedBox(height: 10),
-        _buildStatisticCardWithIcon(
-          'Khách hàng mới',
-          '520',
-          '+0.8%',
-          Icons.person_add,
-        ),
-        SizedBox(height: 10),
-        _buildStatisticCardWithIcon(
-          'Khách hàng hoạt động',
-          '1.2K',
-          '+23%',
-          Icons.people,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatisticCardWithIcon(
-    String title,
-    String value,
-    String subtitle,
-    IconData icon, {
-    double? progress,
-  }) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, color: Colors.black),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(title, style: TextStyle(color: Colors.black)),
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            if (progress != null) ...[
-              SizedBox(height: 10),
-              LinearProgressIndicator(
-                value: progress,
-                backgroundColor: Colors.grey[300],
-                color: Colors.green,
-              ),
-            ],
-            SizedBox(height: 10),
-            Text(subtitle, style: TextStyle(color: Colors.black)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRecentTransactions() {
-    return Column(
-      children: [
-        Text(
-          'Giao dịch gần đây',
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 10),
-        _buildTransactionItem(
-          'Phạm Thị Thắm',
-          '11 May 2023',
-          '100.000đ',
-          Colors.green,
-        ),
-        _buildTransactionItem(
-          'Nguyễn Đan Huy',
-          '20 Jan 2024',
-          '100.000đ',
-          Colors.red,
-        ),
-        _buildTransactionItem(
-          'Nguyễn Đan Huy',
-          '14 Feb 2024',
-          '100.000đ',
-          Colors.green,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTransactionItem(
-    String name,
-    String date,
-    String amount,
-    Color amountColor,
-  ) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-      leading: CircleAvatar(
-        backgroundImage: AssetImage('assets/images/tham.jpg'),
-        radius: 10,
-      ),
-      title: Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text(date, style: TextStyle(color: Colors.grey)),
-      trailing: Text(
-        amount,
-        style: TextStyle(
-          color: amountColor,
-          fontWeight: FontWeight.bold,
-          fontSize: 10,
         ),
       ),
     );
