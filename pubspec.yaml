@@ -71,6 +71,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/Tham-Nho/
+    - assets/images/products/
     - assets/icons/
     - assets/animations/
 
