@@ -3,6 +3,7 @@ import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
 import 'package:mobile_electrical_preorder_system/core/network/auth/auth_network.dart';
 import 'package:mobile_electrical_preorder_system/core/middleware/token_middleware.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mobile_electrical_preorder_system/features/first/index.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -113,6 +114,7 @@ class _LoginPageState extends State<LoginPage>
           ),
 
           // Back button
+          // Back button
           Positioned(
             top: 40,
             left: 16,
@@ -125,7 +127,7 @@ class _LoginPageState extends State<LoginPage>
                 child: IconButton(
                   icon: Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
-                    Navigator.of(context).pushReplacementNamed('/');
+                    Navigator.pop(context);
                   },
                   tooltip: 'Quay về trang chủ',
                 ),

@@ -23,6 +23,6 @@ abstract class ApiService {
   }
 
   Future<Response> delete(String path, String id) {
-    return _apiClient.delete(path, id);
+    return _apiClient.remove(path, id);
   }
 }

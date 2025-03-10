@@ -79,6 +79,10 @@ class ApiClient {
     );
   }
 
+  //==========================================================================
+
+  // Methods
+
   Future<Response> get(String path) async {
     try {
       return await _dio.get(path);
@@ -111,7 +115,12 @@ class ApiClient {
     return await _dio.put(path, data: jsonEncode(data));
   }
 
-  Future<Response> delete(String path, String id) async {
-    return await _dio.delete('$path/$id');
+  Future<Response> remove(String path, String id) async {
+    try {
+      return await _dio.delete('$path/$id');
+    } catch (e) {
+      print('Error: $e');
+      rethrow;
+    }
   }
 }
