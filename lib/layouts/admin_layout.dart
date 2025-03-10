@@ -8,6 +8,7 @@ import 'package:mobile_electrical_preorder_system/features/admin/overview/index.
 import 'package:mobile_electrical_preorder_system/features/admin/campaign/index.dart';
 import 'package:mobile_electrical_preorder_system/features/admin/user/index.dart';
 import 'package:mobile_electrical_preorder_system/features/admin/order/index.dart';
+import 'package:mobile_electrical_preorder_system/features/profile/profile_page.dart';
 
 class AdminLayout extends StatefulWidget {
   @override
@@ -170,7 +171,10 @@ class _AdminLayoutState extends State<AdminLayout> {
         if (value == 'logout') {
           _logout();
         } else if (value == 'profile') {
-          Helper.navigateTo(context, '/staff/profile');
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ProfilePage()),
+          );
         }
       },
       itemBuilder:

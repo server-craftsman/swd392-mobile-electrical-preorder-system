@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
+import 'package:mobile_electrical_preorder_system/features/profile/profile_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile_electrical_preorder_system/core/middleware/token_middleware.dart';
 
@@ -175,7 +176,10 @@ class _ManagerLayoutState extends State<StaffLayout> {
         if (value == 'logout') {
           _logout();
         } else if (value == 'profile') {
-          Helper.navigateTo(context, '/staff/profile');
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ProfilePage()),
+          );
         }
       },
       itemBuilder:

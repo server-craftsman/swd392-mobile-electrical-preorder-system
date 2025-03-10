@@ -2,6 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class Helper {
+  //==========================================================================
+  // Formatting
+  static String formatCurrency(double amount) {
+    // Format as Vietnamese Dong with thousand separators
+    final formatted = amount
+        .toStringAsFixed(0)
+        .replaceAllMapped(
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]}.',
+        );
+    return '$formatted đ';
+  }
+
+  //==========================================================================
+  // Navigation
   static void navigateTo(BuildContext context, String route) {
     GoRouter.of(context).go(route);
   }
