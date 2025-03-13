@@ -12,6 +12,7 @@ class AuthNetwork {
         data: {
           'username': username,
           'password': password,
+
           // 'googleAccountId': googleAccountId,
           // 'fullName': fullName,
         },
