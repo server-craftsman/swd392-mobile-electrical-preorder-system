@@ -5,20 +5,16 @@ import 'package:mobile_electrical_preorder_system/core/middleware/token_middlewa
 class AuthNetwork {
   final ApiClient _apiClient = ApiClient();
 
-  Future<String?> login(
-    String username,
-    String password, {
-    String googleAccountId = "",
-    String fullName = "",
-  }) async {
+  Future<String?> login(String username, String password) async {
     try {
       final response = await _apiClient.post(
         '/auth/login',
         data: {
           'username': username,
           'password': password,
-          'googleAccountId': googleAccountId,
-          'fullName': fullName,
+
+          // 'googleAccountId': googleAccountId,
+          // 'fullName': fullName,
         },
       );
 

@@ -455,8 +455,8 @@ class _LoginPageState extends State<LoginPage>
       final accessToken = await _authNetwork.login(
         _usernameController.text,
         _passwordController.text,
-        googleAccountId: "",
-        fullName: "",
+        // googleAccountId: "",
+        // fullName: "",
       );
 
       if (accessToken != null) {
