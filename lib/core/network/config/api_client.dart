@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 class ApiClient {
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'http://192.168.137.1:8080/api/v1',
+      baseUrl: 'https://elecee.azurewebsites.net/api/v1',
       connectTimeout: Duration(seconds: 10),
       receiveTimeout: Duration(seconds: 10),
       headers: {
@@ -83,9 +83,12 @@ class ApiClient {
 
   // Methods
 
-  Future<Response> get(String path) async {
+  Future<Response> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
     try {
-      return await _dio.get(path);
+      return await _dio.get(path, queryParameters: queryParameters);
     } catch (e) {
       print('Error: $e');
       rethrow;

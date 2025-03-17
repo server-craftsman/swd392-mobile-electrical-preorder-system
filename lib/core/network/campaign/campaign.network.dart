@@ -6,8 +6,24 @@ import './res/index.dart';
 import './req/index.dart';
 
 class CampaignNetwork {
-  static Future<CampaignResponse> getCampaignList() async {
-    final response = await ApiClient().get('/campaigns');
+  static Future<CampaignResponse> getCampaignList({
+    String? name,
+    String? status,
+  }) async {
+    Map<String, dynamic> queryParams = {};
+
+    if (name != null && name.isNotEmpty) {
+      queryParams['name'] = name;
+    }
+
+    if (status != null && status.isNotEmpty) {
+      queryParams['status'] = status;
+    }
+
+    final response = await ApiClient().get(
+      '/campaigns',
+      queryParameters: queryParams,
+    );
 
     return CampaignResponse.fromJson(response.data);
   }

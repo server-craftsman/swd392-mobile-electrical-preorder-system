@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'partials/date_selector.dart';
-import 'partials/statistics_cards.dart';
-import 'partials/recent_transactions.dart';
 
 class CustomerManagePage extends StatefulWidget {
   @override
@@ -70,12 +67,6 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              DateSelector(),
-              SizedBox(height: 20),
-              StatisticsCards(),
-              SizedBox(height: 1),
-              RecentTransactions(),
-              SizedBox(height: 10),
               // Center(
               //   child: ElevatedButton(
               //     onPressed: () {

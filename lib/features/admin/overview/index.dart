@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import './partials/dashboard.dart';
 import './partials/search.dart' as search_widget;
 import './partials/card_state_less.dart' as card_widget;
-import './partials/transaction.dart' as transaction_widget;
+// import './partials/transaction.dart' as transaction_widget;
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -50,7 +50,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       const SizedBox(height: 20),
                       const OverviewPage(),
                       const SizedBox(height: 20),
-                      transaction_widget.buildTransactionList(),
+                      // transaction_widget.buildTransactionList(),
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -61,5 +61,5 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       ),
     );
-  }  
+  }
 }
