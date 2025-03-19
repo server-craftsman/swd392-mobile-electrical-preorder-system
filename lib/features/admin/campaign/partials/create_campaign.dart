@@ -6,9 +6,9 @@ import '../../../../core/network/product/res/index.dart';
 import 'package:intl/intl.dart';
 
 class CreateCampaignDialog extends StatefulWidget {
-  final Function onCampaignCreated;
+  final Function? onCampaignCreated;
 
-  const CreateCampaignDialog({Key? key, required this.onCampaignCreated})
+  const CreateCampaignDialog({Key? key, this.onCampaignCreated})
     : super(key: key);
 
   @override
@@ -139,11 +139,18 @@ class _CreateCampaignDialogState extends State<CreateCampaignDialog> {
         // Create the campaign
         await CampaignNetwork.createCampaign(request);
 
-        // Close the dialog first
-        Navigator.of(context).pop();
+        // Print success message to console for debugging
+        print('Campaign created successfully!');
 
-        // Then call the callback to refresh data
-        widget.onCampaignCreated();
+        // Call the callback if it exists
+        if (widget.onCampaignCreated != null) {
+          widget.onCampaignCreated!();
+        }
+
+        // Close the dialog, returning true to indicate success
+        if (mounted) {
+          Navigator.of(context).pop(true);
+        }
       } catch (e) {
         print('Error creating campaign: $e');
 
