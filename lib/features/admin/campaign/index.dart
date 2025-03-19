@@ -115,6 +115,42 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
     });
   }
 
+  void _openCreateCampaignDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing by tapping outside
+      builder:
+          (context) => CreateCampaignDialog(
+            onCampaignCreated: () {
+              // Explicitly refresh the campaigns list
+              setState(() {
+                _campaignsFuture = CampaignNetwork.getCampaignList();
+
+                // Reset to the "All" tab to show the new campaign
+                if (_tabController != null) {
+                  _tabController!.animateTo(0);
+                }
+              });
+
+              // Show a success message
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Chiến dịch mới đã được tạo và đang hiển thị trong danh sách',
+                  ),
+                  backgroundColor: Color(0xFF48BB78), // Green success color
+                  duration: Duration(seconds: 3),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              );
+            },
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // If tab controller is not initialized yet, show loading
@@ -587,6 +623,11 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
             );
           }),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openCreateCampaignDialog,
+        child: Icon(Icons.add),
+        backgroundColor: _accentColor,
       ),
     );
   }

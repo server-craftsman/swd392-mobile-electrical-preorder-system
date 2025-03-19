@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:mobile_electrical_preorder_system/core/network/config/api_client.dart';
-// import 'package:dio/dio.dart';
-// import 'package:mobile_electrical_preorder_system/core/middleware/token_middleware.dart';
 import './res/index.dart';
 import './req/index.dart';
 
@@ -37,7 +35,19 @@ class CampaignNetwork {
 
   // Add this method to your CampaignNetwork class
   static Future<void> createCampaign(CreateCampaignRequest request) async {
-    await ApiClient().post('/campaigns', data: request.toJson());
+    try {
+      print('Creating campaign with data: ${request.toJson()}');
+      final response = await ApiClient().post(
+        '/campaigns',
+        data: request.toJson(),
+      );
+      print('Campaign created successfully: ${response.statusCode}');
+    } catch (e) {
+      print('Error in createCampaign API call: $e');
+
+      // Rethrow to allow handling in the UI
+      throw e;
+    }
   }
 
   // Add this method to your CampaignNetwork class
