@@ -36,24 +36,45 @@ class Product {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      id: json['id'],
-      productCode: json['productCode'],
-      name: json['name'],
-      slug: json['slug'],
-      quantity: json['quantity'],
-      description: json['description'],
-      price: json['price'],
-      position: json['position'],
-      status: json['status'],
-      category: Category.fromJson(json['category']),
-      imageProducts:
+    // Parse image products safely
+    List<ImageProduct> images = [];
+    if (json['imageProducts'] != null && json['imageProducts'] is List) {
+      images =
           (json['imageProducts'] as List)
               .map((item) => ImageProduct.fromJson(item))
-              .toList(),
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
-      deleted: json['deleted'],
+              .toList();
+    }
+
+    // Create category safely
+    Category category;
+    try {
+      category = Category.fromJson(json['category'] ?? {});
+    } catch (e) {
+      print('Error parsing category: $e');
+      category = Category(id: '', name: 'Unknown');
+    }
+
+    return Product(
+      id: json['id'] ?? '',
+      productCode: json['productCode'] ?? '',
+      name: json['name'] ?? 'Unknown Product',
+      slug: json['slug'] ?? '',
+      quantity: json['quantity'] ?? 0,
+      description: json['description'] ?? '',
+      price: (json['price'] ?? 0).toDouble(),
+      position: json['position'] ?? 0,
+      status: json['status'] ?? 'UNAVAILABLE',
+      category: category,
+      imageProducts: images,
+      createdAt:
+          json['createdAt'] != null
+              ? DateTime.parse(json['createdAt'])
+              : DateTime.now(),
+      updatedAt:
+          json['updatedAt'] != null
+              ? DateTime.parse(json['updatedAt'])
+              : DateTime.now(),
+      deleted: json['deleted'] ?? false,
     );
   }
 }
@@ -74,17 +95,40 @@ class ProductResponse {
 
 class ProductData {
   final List<Product> content;
-  final PageInfo page;
+  final int totalPages;
+  final int totalElements;
+  final bool first;
+  final bool last;
+  final int size;
+  final int number;
 
-  ProductData({required this.content, required this.page});
+  ProductData({
+    required this.content,
+    required this.totalPages,
+    required this.totalElements,
+    required this.first,
+    required this.last,
+    required this.size,
+    required this.number,
+  });
 
   factory ProductData.fromJson(Map<String, dynamic> json) {
-    return ProductData(
-      content:
+    List<Product> products = [];
+    if (json['content'] != null && json['content'] is List) {
+      products =
           (json['content'] as List)
               .map((item) => Product.fromJson(item))
-              .toList(),
-      page: PageInfo.fromJson(json['page']),
+              .toList();
+    }
+
+    return ProductData(
+      content: products,
+      totalPages: json['totalPages'] ?? 0,
+      totalElements: json['totalElements'] ?? 0,
+      first: json['first'] ?? true,
+      last: json['last'] ?? true,
+      size: json['size'] ?? 0,
+      number: json['number'] ?? 0,
     );
   }
 }

@@ -5,7 +5,7 @@ class CreateCampaignRequest {
   final int minQuantity;
   final int maxQuantity;
   final double totalAmount;
-  final String status;
+  final String? status;
   final String productId;
 
   CreateCampaignRequest({
@@ -15,20 +15,39 @@ class CreateCampaignRequest {
     required this.minQuantity,
     required this.maxQuantity,
     required this.totalAmount,
-    required this.status,
+    this.status,
     required this.productId,
   });
 
+  factory CreateCampaignRequest.fromJson(Map<String, dynamic> json) {
+    return CreateCampaignRequest(
+      name: json['name'],
+      startDate: json['startDate'],
+      endDate: json['endDate'],
+      minQuantity: json['minQuantity'],
+      maxQuantity: json['maxQuantity'],
+      totalAmount: json['totalAmount'] ?? 0.0,
+      status: json['status'],
+      productId: json['productId'],
+    );
+  }
+
   Map<String, dynamic> toJson() {
-    return {
+    final Map<String, dynamic> data = {
       'name': name,
       'startDate': startDate,
       'endDate': endDate,
       'minQuantity': minQuantity,
       'maxQuantity': maxQuantity,
       'totalAmount': totalAmount,
-      'status': status,
       'productId': productId,
     };
+
+    // Only include status in the JSON if it's not null
+    if (status != null) {
+      data['status'] = status;
+    }
+
+    return data;
   }
 }
