@@ -1,79 +1,49 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:mobile_electrical_preorder_system/core/middleware/token_middleware.dart';
 
 class ApiClient {
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: 'https://elecee.azurewebsites.net/api/v1',
-      connectTimeout: Duration(seconds: 10),
-      receiveTimeout: Duration(seconds: 10),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      validateStatus: (status) {
-        // Allow all status codes to pass through without throwing an exception
-        return true;
-      },
-    ),
-  );
+  late Dio _dio;
 
-  String? _accessToken;
-
-  ApiClient();
-
-  void setAccessToken(String token) {
-    _accessToken = token;
-  }
-
-  void _addAuthorizationHeader(RequestOptions options) {
-    if (_accessToken != null) {
-      options.headers["Authorization"] = "Bearer $_accessToken";
-    }
-  }
-
-  void setupInterceptors() {
+  ApiClient() {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: 'https://elecee.azurewebsites.net/api/v1',
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      ),
+    );
+    
+    // Add interceptor to automatically add auth token to requests
     _dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) {
-          _addAuthorizationHeader(options);
+        onRequest: (options, handler) async {
+          // Get the token and add it to the Authorization header if it exists
+          final token = await TokenService.getAccessToken();
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+            print('Adding token to request: Bearer ${token.substring(0, min(10, token.length))}...');
+          } else {
+            print('No token available for request to ${options.path}');
+          }
+          
           return handler.next(options);
         },
-        onResponse: (response, handler) {
-          return handler.next(response);
-        },
-        onError: (DioException e, handler) {
-          String errorDescription = "";
-          switch (e.type) {
-            case DioExceptionType.cancel:
-              errorDescription = "Request to API server was cancelled";
-              break;
-            case DioExceptionType.connectionTimeout:
-              errorDescription = "Connection timeout with API server";
-              break;
-            case DioExceptionType.receiveTimeout:
-              errorDescription =
-                  "Receive timeout in connection with API server";
-              break;
-            case DioExceptionType.sendTimeout:
-              errorDescription = "Send timeout in connection with API server";
-              break;
-            case DioExceptionType.unknown:
-              errorDescription =
-                  "Connection to API server failed due to internet connection";
-              break;
-            case DioExceptionType.badCertificate:
-              errorDescription = "Bad certificate";
-              break;
-            case DioExceptionType.badResponse:
-              errorDescription = "Bad response: ${e.response?.statusCode}";
-              break;
-            case DioExceptionType.connectionError:
-              errorDescription = "Connection error";
-              break;
+        onError: (DioException error, handler) {
+          print('API Error: ${error.message}');
+          print('Response data: ${error.response?.data}');
+          if (error.response?.statusCode == 401 || error.response?.statusCode == 403) {
+            print('Authentication error - token may be invalid or expired');
+            // Handle token expiration or auth error
           }
-          print("API Error: $errorDescription");
-          return handler.next(e);
+          return handler.next(error);
+        },
+        onResponse: (response, handler) {
+          print('API Response Status: ${response.statusCode}');
+          return handler.next(response);
         },
       ),
     );
@@ -88,9 +58,13 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
   }) async {
     try {
-      return await _dio.get(path, queryParameters: queryParameters);
+      final response = await _dio.get(
+        path,
+        queryParameters: queryParameters,
+      );
+      return response;
     } catch (e) {
-      print('Error: $e');
+      print('GET request error: $e');
       rethrow;
     }
   }
@@ -104,12 +78,20 @@ class ApiClient {
     }
   }
 
-  Future<Response> post(String path, {dynamic data}) async {
+  Future<Response> post(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+  }) async {
     try {
-      final response = await _dio.post(path, data: jsonEncode(data));
+      final response = await _dio.post(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+      );
       return response;
     } catch (e) {
-      print('Error: $e');
+      print('POST request error: $e');
       rethrow;
     }
   }
@@ -127,3 +109,6 @@ class ApiClient {
     }
   }
 }
+
+// Helper function for string manipulation
+int min(int a, int b) => a < b ? a : b;

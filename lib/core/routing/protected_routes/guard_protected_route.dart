@@ -15,9 +15,11 @@ GoRoute protectedGuardAdminRoute(String path, Widget child) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
+            print("Error fetching token: ${snapshot.error}");
             return Center(child: Text('Error fetching token'));
           } else {
             final accessToken = snapshot.data;
+            print("Protected route token check: ${accessToken != null ? 'Token exists' : 'No token'}");
             return FutureBuilder(
               future: TokenService.decodeAccessToken(accessToken ?? ''),
               builder: (context, snapshot) {
@@ -59,9 +61,11 @@ GoRoute protectedGuardStaffRoute(String path, Widget child) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
+            print("Error fetching token: ${snapshot.error}");
             return Center(child: Text('Error fetching token'));
           } else {
             final accessToken = snapshot.data;
+            print("Protected route token check: ${accessToken != null ? 'Token exists' : 'No token'}");
             return FutureBuilder(
               future: TokenService.decodeAccessToken(accessToken ?? ''),
               builder: (context, snapshot) {

@@ -2,6 +2,7 @@ import 'package:mobile_electrical_preorder_system/core/network/config/api_client
 import 'package:mobile_electrical_preorder_system/core/network/user/req/user_req.dart';
 import 'package:mobile_electrical_preorder_system/core/network/user/res/register_res.dart';
 import 'package:mobile_electrical_preorder_system/core/utils/format_response.dart';
+import 'package:mobile_electrical_preorder_system/core/network/user/res/index.dart';
 
 class UserNetwork {
   final ApiClient _apiClient = ApiClient();
@@ -14,5 +15,15 @@ class UserNetwork {
       message: true,
       data: RegisterResponse.fromJson(response.data),
     );
+  }
+
+  Future<User?> getUserById(String userId) async {
+    try {
+      final response = await _apiClient.get('/user/$userId');
+      return User.fromJson(response.data);
+    } catch (e) {
+      print('Error fetching user by ID: $e');
+      return null;
+    }
   }
 }

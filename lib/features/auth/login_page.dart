@@ -426,7 +426,6 @@ class _LoginPageState extends State<LoginPage>
 
   // Keep the existing _handleLogin method
   Future<void> _handleLogin() async {
-    // Your existing login logic
     try {
       if (_usernameController.text.isEmpty ||
           _passwordController.text.isEmpty) {
@@ -455,20 +454,16 @@ class _LoginPageState extends State<LoginPage>
       final accessToken = await _authNetwork.login(
         _usernameController.text,
         _passwordController.text,
-        // googleAccountId: "",
-        // fullName: "",
       );
 
       if (accessToken != null) {
-        _saveCredentials();
+        await TokenService.saveAccessToken(accessToken);
         print('Access Token: $accessToken');
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-        // Decode the role from the access token
         final decodedToken = await TokenService.decodeAccessToken(accessToken);
         final role = decodedToken?['role'];
 
-        // Navigate based on the role
         if (role != null) {
           switch (role) {
             case 'ROLE_ADMIN':
@@ -482,7 +477,6 @@ class _LoginPageState extends State<LoginPage>
               break;
           }
         } else {
-          // Handle case where role is not found
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Không thể xác định vai trò người dùng.'),
@@ -491,7 +485,6 @@ class _LoginPageState extends State<LoginPage>
           );
         }
       } else {
-        // Handle login failure
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
