@@ -29,7 +29,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
 
   // IMPORTANT: Store scaffoldMessenger in initState
   late ScaffoldMessengerState _scaffoldMessenger;
-  
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -88,7 +88,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
               children: [
                 // Hero header section
                 _buildHeroHeader(context, statusColor, statusText, statusIcon),
-                
+
                 // Content sections in a container
                 Padding(
                   padding: EdgeInsets.only(top: 20, bottom: 100),
@@ -97,22 +97,22 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                     children: [
                       // Order summary card
                       _buildOrderSummaryCard(),
-                      
+
                       // Section title - Customer info
                       _buildSectionTitle('Thông tin khách hàng'),
-                      
+
                       // Customer info card
                       _buildCustomerInfoCard(),
-                      
+
                       // Section title - Product
                       _buildSectionTitle('Thông tin sản phẩm'),
-                      
+
                       // Product card
                       _buildProductCard(),
-                      
+
                       // Section title - Campaign
                       _buildSectionTitle('Thông tin chiến dịch'),
-                      
+
                       // Campaign card
                       _buildCampaignCard(),
                     ],
@@ -121,7 +121,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
               ],
             ),
           ),
-          
+
           // App bar with back button and delete action
           Positioned(
             top: 0,
@@ -130,7 +130,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             child: Container(
               height: MediaQuery.of(context).padding.top + 56,
               child: Padding(
-                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).padding.top,
+                ),
                 child: Row(
                   children: [
                     // Back button
@@ -152,7 +154,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
               ),
             ),
           ),
-          
+
           // Loading overlay
           if (_isDeleting)
             Container(
@@ -174,10 +176,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
           icon: Icon(Icons.delete_rounded),
           label: Text(
             'Xóa đơn hàng',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5),
           ),
         ),
       ),
@@ -186,7 +185,12 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
   }
 
   // Hero header with status and curved design
-  Widget _buildHeroHeader(BuildContext context, Color statusColor, String statusText, IconData statusIcon) {
+  Widget _buildHeroHeader(
+    BuildContext context,
+    Color statusColor,
+    String statusText,
+    IconData statusIcon,
+  ) {
     return Container(
       width: double.infinity,
       height: 280,
@@ -230,7 +234,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
               ),
             ),
           ),
-          
+
           // Content overlay
           Positioned.fill(
             child: Padding(
@@ -249,7 +253,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                     ),
                   ),
                   SizedBox(height: 8),
-                  
+
                   // ID
                   Text(
                     'Mã đơn hàng: ${_truncateId(widget.order.id)}',
@@ -259,9 +263,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  
+
                   SizedBox(height: 24),
-                  
+
                   // Status badge
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -355,9 +359,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                   ),
                 ],
               ),
-              
+
               Divider(height: 24, color: Colors.grey.withOpacity(0.2)),
-              
+
               // Total amount
               Row(
                 children: [
@@ -442,7 +446,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                     ),
                   ),
                   SizedBox(width: 16),
-                  
+
                   // Name and email
                   Expanded(
                     child: Column(
@@ -469,25 +473,25 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                   ),
                 ],
               ),
-              
+
               SizedBox(height: 16),
               Divider(height: 1, color: Colors.grey.withOpacity(0.2)),
               SizedBox(height: 16),
-              
+
               // Contact info
               _buildContactRow(
                 Icons.phone_rounded,
                 'Số điện thoại',
-                widget.order.user.phoneNumber.isNotEmpty 
-                    ? widget.order.user.phoneNumber 
+                widget.order.user.phoneNumber.isNotEmpty
+                    ? widget.order.user.phoneNumber
                     : 'Chưa cung cấp',
-                widget.order.user.phoneNumber.isEmpty 
-                    ? textSecondaryColor 
+                widget.order.user.phoneNumber.isEmpty
+                    ? textSecondaryColor
                     : textPrimaryColor,
               ),
-              
+
               SizedBox(height: 12),
-              
+
               // Address (optional)
               _buildContactRow(
                 Icons.location_on_rounded,
@@ -534,7 +538,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                 ),
               ),
               SizedBox(width: 16),
-              
+
               // Product details
               Expanded(
                 child: Column(
@@ -551,18 +555,18 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                     SizedBox(height: 4),
                     Text(
                       'Mã: ${widget.order.campaign.product.productCode}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: textSecondaryColor,
-                      ),
+                      style: TextStyle(fontSize: 14, color: textSecondaryColor),
                     ),
                     SizedBox(height: 8),
-                    
+
                     // Category and quantity
                     Row(
                       children: [
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: accentColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(4),
@@ -578,7 +582,10 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                         ),
                         SizedBox(width: 8),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: primaryColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(4),
@@ -595,7 +602,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                       ],
                     ),
                     SizedBox(height: 12),
-                    
+
                     // Price
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -608,7 +615,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                           ),
                         ),
                         Text(
-                          currencyFormatter.format(widget.order.campaign.product.price),
+                          currencyFormatter.format(
+                            widget.order.campaign.product.price,
+                          ),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -652,7 +661,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                 ),
               ),
               SizedBox(height: 16),
-              
+
               // Campaign details in a grid
               Row(
                 children: [
@@ -660,7 +669,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                   Expanded(
                     child: _buildInfoTile(
                       'Bắt đầu',
-                      DateFormat('dd/MM/yyyy').format(widget.order.campaign.startDate),
+                      DateFormat(
+                        'dd/MM/yyyy',
+                      ).format(widget.order.campaign.startDate),
                       Icons.event_available_rounded,
                       accentColor,
                     ),
@@ -669,7 +680,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                   Expanded(
                     child: _buildInfoTile(
                       'Kết thúc',
-                      DateFormat('dd/MM/yyyy').format(widget.order.campaign.endDate),
+                      DateFormat(
+                        'dd/MM/yyyy',
+                      ).format(widget.order.campaign.endDate),
                       Icons.event_busy_rounded,
                       primaryColor,
                     ),
@@ -700,19 +713,23 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                 ],
               ),
               SizedBox(height: 16),
-              
+
               // Campaign status
               Row(
                 children: [
                   Container(
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: _getCampaignStatusColor(widget.order.campaign.status).withOpacity(0.1),
+                      color: _getCampaignStatusColor(
+                        widget.order.campaign.status,
+                      ).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
                       _getCampaignStatusIcon(widget.order.campaign.status),
-                      color: _getCampaignStatusColor(widget.order.campaign.status),
+                      color: _getCampaignStatusColor(
+                        widget.order.campaign.status,
+                      ),
                       size: 20,
                     ),
                   ),
@@ -731,7 +748,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                       Text(
                         _getCampaignStatusText(widget.order.campaign.status),
                         style: TextStyle(
-                          color: _getCampaignStatusColor(widget.order.campaign.status),
+                          color: _getCampaignStatusColor(
+                            widget.order.campaign.status,
+                          ),
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -764,7 +783,12 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
   }
 
   // Contact information row
-  Widget _buildContactRow(IconData icon, String label, String value, Color valueColor) {
+  Widget _buildContactRow(
+    IconData icon,
+    String label,
+    String value,
+    Color valueColor,
+  ) {
     return Row(
       children: [
         Container(
@@ -773,11 +797,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             color: accentColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
-            icon,
-            color: accentColor,
-            size: 20,
-          ),
+          child: Icon(icon, color: accentColor, size: 20),
         ),
         SizedBox(width: 12),
         Column(
@@ -785,10 +805,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
           children: [
             Text(
               label,
-              style: TextStyle(
-                color: textSecondaryColor,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: textSecondaryColor, fontSize: 14),
             ),
             SizedBox(height: 2),
             Text(
@@ -804,9 +821,14 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
       ],
     );
   }
-  
+
   // Info tile for grid layout
-  Widget _buildInfoTile(String label, String value, IconData icon, Color iconColor) {
+  Widget _buildInfoTile(
+    String label,
+    String value,
+    IconData icon,
+    Color iconColor,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -816,10 +838,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             SizedBox(width: 4),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 13,
-                color: textSecondaryColor,
-              ),
+              style: TextStyle(fontSize: 13, color: textSecondaryColor),
             ),
           ],
         ),
@@ -837,7 +856,12 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
   }
 
   // App bar icon button
-  Widget _buildIconButton(BuildContext context, IconData icon, VoidCallback onPressed, [Color? color]) {
+  Widget _buildIconButton(
+    BuildContext context,
+    IconData icon,
+    VoidCallback onPressed, [
+    Color? color,
+  ]) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8),
       child: Material(
@@ -848,11 +872,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
           onTap: onPressed,
           child: Container(
             padding: EdgeInsets.all(12),
-            child: Icon(
-              icon,
-              color: color ?? textPrimaryColor,
-              size: 24,
-            ),
+            child: Icon(icon, color: color ?? textPrimaryColor, size: 24),
           ),
         ),
       ),
@@ -869,13 +889,13 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
       return nameParts.first[0];
     }
   }
-  
+
   // Truncate order ID for display
   String _truncateId(String id) {
     if (id.length <= 12) return id;
     return id.substring(0, 6) + '...' + id.substring(id.length - 6);
   }
-  
+
   // Get campaign status color
   Color _getCampaignStatusColor(String status) {
     switch (status.toUpperCase()) {
@@ -891,7 +911,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         return textSecondaryColor;
     }
   }
-  
+
   // Get campaign status icon
   IconData _getCampaignStatusIcon(String status) {
     switch (status.toUpperCase()) {
@@ -907,7 +927,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         return Icons.help_outline_rounded;
     }
   }
-  
+
   // Get campaign status text
   String _getCampaignStatusText(String status) {
     switch (status.toUpperCase()) {
@@ -928,110 +948,117 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
   void _showDeleteConfirmDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        contentPadding: EdgeInsets.zero,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: dangerColor.withOpacity(0.1),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
+      builder:
+          (dialogContext) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            contentPadding: EdgeInsets.zero,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: dangerColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.warning_amber_rounded,
+                    color: dangerColor,
+                    size: 70,
+                  ),
                 ),
-              ),
-              child: Icon(
-                Icons.warning_amber_rounded,
-                color: dangerColor,
-                size: 70,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Text(
-                    'Xác nhận xóa',
-                    style: TextStyle(
-                      color: textPrimaryColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 12),
-                  Text(
-                    'Bạn có chắc chắn muốn xóa đơn hàng này không?',
-                    style: TextStyle(
-                      color: textPrimaryColor,
-                      fontSize: 16,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Hành động này không thể hoàn tác.',
-                    style: TextStyle(
-                      color: textSecondaryColor,
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-            Divider(height: 0, thickness: 1, color: Colors.grey.withOpacity(0.2)),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(false),
-                    style: TextButton.styleFrom(
-                      foregroundColor: textSecondaryColor,
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    ),
-                    child: Text(
-                      'Hủy',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                  Container(
-                    height: 24,
-                    width: 1,
-                    color: Colors.grey.withOpacity(0.2),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // Return true to indicate delete confirmation
-                      Navigator.of(dialogContext).pop(true);
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Color(0xFFE53935),
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Xác nhận xóa',
+                        style: TextStyle(
+                          color: textPrimaryColor,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                    ),
-                    child: Text(
-                      'Xóa',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                      SizedBox(height: 12),
+                      Text(
+                        'Bạn có chắc chắn muốn xóa đơn hàng này không?',
+                        style: TextStyle(color: textPrimaryColor, fontSize: 16),
+                        textAlign: TextAlign.center,
                       ),
-                    ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Hành động này không thể hoàn tác.',
+                        style: TextStyle(
+                          color: textSecondaryColor,
+                          fontSize: 14,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                Divider(
+                  height: 0,
+                  thickness: 1,
+                  color: Colors.grey.withOpacity(0.2),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: TextButton.styleFrom(
+                          foregroundColor: textSecondaryColor,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: Text('Hủy', style: TextStyle(fontSize: 16)),
+                      ),
+                      Container(
+                        height: 24,
+                        width: 1,
+                        color: Colors.grey.withOpacity(0.2),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // Return true to indicate delete confirmation
+                          Navigator.of(dialogContext).pop(true);
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Color(0xFFE53935),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          'Xóa',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
     ).then((confirmed) {
       // Only proceed with deletion if user confirmed
       if (confirmed == true) {
@@ -1043,33 +1070,33 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
   // Completely rewritten delete order method to fix the widget deactivation issue
   Future<void> _deleteOrder() async {
     if (!mounted) return;
-    
+
     try {
       // Show loading indicator
       setState(() {
         _isDeleting = true;
       });
-      
+
       // Call API to delete order
       final result = await _orderNetwork.deleteOrder(widget.order.id);
-      
+
       // Safety check - if widget is unmounted, don't proceed
       if (!mounted) return;
-      
+
       // Hide loading indicator
       setState(() {
         _isDeleting = false;
       });
-      
+
       final bool isSuccess = result['success'] == true;
-      
+
       if (isSuccess) {
         // First navigate back with success result
         Navigator.of(context).pop({
           'deleted': true,
-          'message': result['message'] ?? 'Đã xóa đơn hàng thành công'
+          'message': result['message'] ?? 'Đã xóa đơn hàng thành công',
         });
-        
+
         // No more UI operations after navigation!
       } else {
         // For errors, show message in current screen (no navigation)
@@ -1084,12 +1111,12 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
     } catch (e) {
       // Safety check - if widget is unmounted, don't proceed
       if (!mounted) return;
-      
+
       // Hide loading
       setState(() {
         _isDeleting = false;
       });
-      
+
       // Show error
       _scaffoldMessenger.showSnackBar(
         SnackBar(
@@ -1109,7 +1136,7 @@ class CurvedBottomClipper extends CustomClipper<Path> {
     final path = Path();
     path.lineTo(0, 0); // Top left
     path.lineTo(0, size.height * 0.85); // Bottom left with some space
-    
+
     // Curved bottom
     path.quadraticBezierTo(
       size.width * 0.5, // Control point x
@@ -1117,10 +1144,10 @@ class CurvedBottomClipper extends CustomClipper<Path> {
       size.width, // End point x
       size.height * 0.85, // End point y
     );
-    
+
     path.lineTo(size.width, 0); // Top right
     path.close();
-    
+
     return path;
   }
 
