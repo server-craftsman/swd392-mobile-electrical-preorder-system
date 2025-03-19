@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "100999484571",
+    "project_id": "wsd392-b6560",
+    "storage_bucket": "wsd392-b6560.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:100999484571:android:277d5961fac3503111e23e",
+        "android_client_info": {
+          "package_name": "com.swd392.elecee"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVwD7CjPaT59v2WwmYthBeSQNyxVlYHYc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
