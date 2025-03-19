@@ -34,16 +34,13 @@ class UserNetwork {
         queryParameters: {'page': page, 'size': size},
       );
 
-      // Extract data from response
       final responseData = response.data;
 
-      // Check if the response has the expected structure
       if (responseData is Map<String, dynamic> &&
           responseData.containsKey('data') &&
           responseData['data'] is Map<String, dynamic>) {
         final data = responseData['data'] as Map<String, dynamic>;
 
-        // Parse users from response
         final List<User> users = [];
         if (data.containsKey('users') && data['users'] is List) {
           for (var userJson in data['users']) {
@@ -55,7 +52,6 @@ class UserNetwork {
           }
         }
 
-        // Return structured data
         return {
           'users': users,
           'totalPages': data['totalPages'] ?? 0,
@@ -66,7 +62,6 @@ class UserNetwork {
         };
       }
 
-      // Return empty result if response format is unexpected
       return {
         'users': <User>[],
         'totalPages': 0,
@@ -78,7 +73,6 @@ class UserNetwork {
     } catch (e) {
       print('Error fetching all users: $e');
 
-      // Return error result
       return {
         'users': <User>[],
         'totalPages': 0,

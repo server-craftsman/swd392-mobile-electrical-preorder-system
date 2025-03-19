@@ -29,18 +29,22 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
-      username: json['username'],
-      fullname: json['fullname'],
-      email: json['email'],
-      phoneNumber: json['phoneNumber'],
-      status: json['status'],
-      role: json['role'],
-      avatar: json['avatar'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
-      verified: json['verified'],
-      deleted: json['deleted'],
+      id: json['id'] ?? '',
+      username: json['username'] ?? '',
+      fullname: json['fullname'] ?? 'Unknown',
+      email: json['email'] ?? 'No email',
+      phoneNumber: json['phoneNumber'] ?? 'No phone',
+      status: json['status'] ?? 'INACTIVE',
+      role: json['role'] ?? 'ROLE_UNKNOWN',
+      avatar: json['avatar'] ?? '',
+      createdAt: DateTime.parse(
+        json['createdAt'] ?? DateTime.now().toIso8601String(),
+      ),
+      updatedAt: DateTime.parse(
+        json['updatedAt'] ?? DateTime.now().toIso8601String(),
+      ),
+      verified: json['verified'] ?? false,
+      deleted: json['deleted'] ?? false,
     );
   }
 }
