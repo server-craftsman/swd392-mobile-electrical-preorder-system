@@ -115,40 +115,47 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
     });
   }
 
-  void _openCreateCampaignDialog() {
-    showDialog(
+  void _openCreateCampaignDialog() async {
+    // Show dialog and wait for the result
+    final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false, // Prevent dismissing by tapping outside
       builder:
           (context) => CreateCampaignDialog(
             onCampaignCreated: () {
-              // Explicitly refresh the campaigns list
-              setState(() {
-                _campaignsFuture = CampaignNetwork.getCampaignList();
-
-                // Reset to the "All" tab to show the new campaign
-                if (_tabController != null) {
-                  _tabController!.animateTo(0);
-                }
-              });
-
-              // Show a success message
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Chiến dịch mới đã được tạo và đang hiển thị trong danh sách',
-                  ),
-                  backgroundColor: Color(0xFF48BB78), // Green success color
-                  duration: Duration(seconds: 3),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              );
+              // This callback is no longer used to show snackbar or refresh directly
+              // It can be used for any additional actions needed before closing the dialog
             },
           ),
     );
+
+    // Only proceed if we got a successful result (true)
+    if (result == true) {
+      // Explicitly refresh the campaigns list
+      setState(() {
+        _campaignsFuture = CampaignNetwork.getCampaignList();
+
+        // Reset to the "All" tab to show the new campaign
+        if (_tabController != null) {
+          _tabController!.animateTo(0);
+        }
+      });
+
+      // Now it's safe to show a SnackBar in the parent context
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Chiến dịch mới đã được tạo và đang hiển thị trong danh sách',
+          ),
+          backgroundColor: Color(0xFF48BB78), // Green success color
+          duration: Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+    }
   }
 
   @override
