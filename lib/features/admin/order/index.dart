@@ -13,11 +13,15 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
   List<Order> _orders = [];
+  List<Order> _filteredOrders = [];
   bool _isLoading = true;
   int _totalOrders = 0;
   int _currentPage = 0;
   int _totalPages = 0;
   double _totalAmount = 0;
+  String _searchQuery = '';
+  bool _isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
 
   final OrderNetwork _orderNetwork = OrderNetwork();
 
@@ -43,6 +47,45 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
     super.initState();
     _tabController = TabController(length: 6, vsync: this);
     _fetchOrders();
+
+    // Add listener to search controller
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    setState(() {
+      _searchQuery = _searchController.text;
+      _filterOrders();
+    });
+  }
+
+  void _filterOrders() {
+    setState(() {
+      _filteredOrders =
+          _orders.where((order) {
+            return order.user.fullname.toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                ) ||
+                order.id.toLowerCase().contains(_searchQuery.toLowerCase());
+          }).toList();
+    });
+  }
+
+  void _toggleSearch() {
+    setState(() {
+      _isSearching = !_isSearching;
+      if (!_isSearching) {
+        _searchController.clear();
+        _filteredOrders = _orders;
+      }
+    });
   }
 
   Future<void> _fetchOrders() async {
@@ -94,12 +137,6 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
   }
 
   @override
-  void dispose() {
-    _tabController?.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
@@ -129,207 +166,119 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(
-          'Quản lý đơn hàng',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
-          ),
-        ),
+        title:
+            _isSearching
+                ? TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Tìm kiếm đơn hàng...',
+                    hintStyle: TextStyle(color: Colors.white70),
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.search, color: Colors.white70),
+                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  autofocus: true,
+                )
+                : Text(
+                  'Quản lý đơn hàng',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
+                ),
         elevation: 0,
         backgroundColor: Color(0xFF1A237E),
         iconTheme: IconThemeData(color: Colors.white),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, size: 20),
+          icon: Icon(Icons.arrow_back, size: 20),
           onPressed: () {
-            Navigator.pop(context);
+            if (_isSearching) {
+              _toggleSearch();
+            } else {
+              Navigator.pop(context);
+            }
           },
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              // Implement search functionality
-            },
+            icon: Icon(
+              _isSearching ? Icons.close : Icons.search,
+              color: Colors.white,
+            ),
+            onPressed: _toggleSearch,
+          ),
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: _fetchOrders,
+            color: Colors.white,
           ),
         ],
-      ),
-      body: Column(
-        children: [
-          // Header gradient
-          Container(
-            height: 80,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFF1A237E), Color(0xFF1A237E)],
-              ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+        ),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(60),
+          child: Container(
+            height: 60,
+            child: TabBar(
+              controller: _tabController!,
+              tabs: [
+                Tab(child: Text('Tất cả')),
+                Tab(child: Text('Chờ xác nhận')),
+                Tab(child: Text('Đã xác nhận')),
+                Tab(child: Text('Đang giao')),
+                Tab(child: Text('Đã giao')),
+                Tab(child: Text('Đã hủy')),
+              ],
+              indicatorColor: accentColor,
+              indicatorWeight: 3,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white70,
+              isScrollable: true,
+              labelPadding: EdgeInsets.symmetric(horizontal: 20),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
+          ),
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [backgroundColor, Color(0xFFEDF2F7)],
+          ),
+        ),
+        child: Column(
+          children: [
+            // Tab Bar View
+            Expanded(
+              child: TabBarView(
+                controller: _tabController!,
                 children: [
-                  Text(
-                    'Danh sách đơn hàng',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Spacer(),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.shopping_bag_outlined,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Tổng: ${_totalOrders} đơn',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildOrderList(STATUS_ALL),
+                  _buildOrderList(STATUS_PENDING),
+                  _buildOrderList(STATUS_CONFIRMED),
+                  _buildOrderList(STATUS_SHIPPED),
+                  _buildOrderList(STATUS_DELIVERED),
+                  _buildOrderList(STATUS_CANCELLED),
                 ],
               ),
             ),
-          ),
-
-          // Tab Bar - Improved design
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 16.0),
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: TabBar(
-              controller: _tabController!,
-              indicator: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                gradient: LinearGradient(
-                  colors: [Color(0xFF1A237E), Color(0xFF1A237E)],
-                ),
-              ),
-              labelColor: Colors.white,
-              unselectedLabelColor: textPrimaryColor.withOpacity(0.7),
-              labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-              unselectedLabelStyle: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 13,
-              ),
-              padding: EdgeInsets.all(6),
-              labelPadding: EdgeInsets.symmetric(horizontal: 5),
-              indicatorPadding: EdgeInsets.zero,
-              isScrollable: true,
-              tabs: [
-                Tab(
-                  child: Container(
-                    width: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    alignment: Alignment.center,
-                    child: Text('Tất cả'),
-                  ),
-                ),
-                Tab(
-                  child: Container(
-                    width: 90,
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    alignment: Alignment.center,
-                    child: Text('Chờ xác nhận'),
-                  ),
-                ),
-                Tab(
-                  child: Container(
-                    width: 90,
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    alignment: Alignment.center,
-                    child: Text('Đã xác nhận'),
-                  ),
-                ),
-                Tab(
-                  child: Container(
-                    width: 75,
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    alignment: Alignment.center,
-                    child: Text('Đang giao'),
-                  ),
-                ),
-                Tab(
-                  child: Container(
-                    width: 60,
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    alignment: Alignment.center,
-                    child: Text('Đã giao'),
-                  ),
-                ),
-                Tab(
-                  child: Container(
-                    width: 60,
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    alignment: Alignment.center,
-                    child: Text('Đã hủy'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(height: 16),
-
-          // Tab Bar View
-          Expanded(
-            child: TabBarView(
-              controller: _tabController!,
-              children: [
-                _buildOrderList(STATUS_ALL),
-                _buildOrderList(STATUS_PENDING),
-                _buildOrderList(STATUS_CONFIRMED),
-                _buildOrderList(STATUS_SHIPPED),
-                _buildOrderList(STATUS_DELIVERED),
-                _buildOrderList(STATUS_CANCELLED),
-              ],
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _fetchOrders,
-        backgroundColor: Color(0xFF1A237E),
-        child: Icon(Icons.refresh),
-        tooltip: 'Refresh orders',
-        elevation: 4,
+          ],
+        ),
       ),
     );
   }
 
   // Method to build order list based on status - Updated to match API status values
   Widget _buildOrderList(String status) {
+    final ordersToDisplay = _searchQuery.isEmpty ? _orders : _filteredOrders;
     final filteredOrders =
         status == STATUS_ALL
-            ? _orders
-            : _orders.where((order) => order.status == status).toList();
+            ? ordersToDisplay
+            : ordersToDisplay.where((order) => order.status == status).toList();
 
     if (filteredOrders.isEmpty) {
       return Center(

@@ -3,6 +3,7 @@ import 'package:mobile_electrical_preorder_system/core/network/campaign/campaign
 import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
 import 'package:mobile_electrical_preorder_system/core/network/campaign/res/index.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'update_campaign.dart'; // Import the update campaign dialog
 
 class CampaignDetailsPage extends StatefulWidget {
   final String campaignId;
@@ -189,6 +190,33 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
     }
   }
 
+  Future<void> _openUpdateCampaignDialog() async {
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (context) => UpdateCampaignDialog(
+            campaignId: widget.campaignId,
+            onCampaignUpdated: () {
+              _loadCampaignDetails();
+            },
+          ),
+    );
+
+    if (result == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Chiến dịch đã được cập nhật thành công'),
+          backgroundColor: _activeColor,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -216,6 +244,10 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
           IconButton(
             icon: Icon(Icons.refresh, color: Colors.white),
             onPressed: _loadCampaignDetails,
+          ),
+          IconButton(
+            icon: Icon(Icons.edit, color: Colors.white),
+            onPressed: _openUpdateCampaignDialog,
           ),
         ],
       ),
@@ -630,6 +662,30 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
                                   ),
                                   onPressed:
                                       _isLoading ? null : _handleCancelCampaign,
+                                ),
+                              ),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  icon: Icon(Icons.edit_outlined),
+                                  label: Text(
+                                    'Cập nhật',
+                                    style: GoogleFonts.montserrat(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: _activeColor,
+                                    foregroundColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(vertical: 14),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  onPressed:
+                                      _isLoading
+                                          ? null
+                                          : _openUpdateCampaignDialog,
                                 ),
                               ),
                             ],

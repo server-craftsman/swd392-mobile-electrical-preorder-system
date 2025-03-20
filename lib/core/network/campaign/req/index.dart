@@ -51,3 +51,51 @@ class CreateCampaignRequest {
     return data;
   }
 }
+
+class UpdateCampaignRequest {
+  final String id;
+  final String name;
+  final String startDate;
+  final String endDate;
+  final int minQuantity;
+  final int maxQuantity;
+  final double totalAmount;
+  final String productId;
+
+  UpdateCampaignRequest({
+    required this.id,
+    required this.name,
+    required this.startDate,
+    required this.endDate,
+    required this.minQuantity,
+    required this.maxQuantity,
+    required this.totalAmount,
+    required this.productId,
+  });
+
+  factory UpdateCampaignRequest.fromJson(Map<String, dynamic> json) {
+    return UpdateCampaignRequest(
+      id: json['id'],
+      name: json['name'],
+      startDate: json['startDate'],
+      endDate: json['endDate'],
+      minQuantity: json['minQuantity'],
+      maxQuantity: json['maxQuantity'],
+      totalAmount: json['totalAmount'] ?? 0.0,
+      productId: json['productId'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'startDate': startDate,
+      'endDate': endDate,
+      'minQuantity': minQuantity,
+      'maxQuantity': maxQuantity,
+      'totalAmount': totalAmount,
+      'productId': productId,
+    };
+  }
+}
