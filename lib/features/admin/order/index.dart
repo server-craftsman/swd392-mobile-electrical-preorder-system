@@ -18,9 +18,9 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
   int _currentPage = 0;
   int _totalPages = 0;
   double _totalAmount = 0;
-  
+
   final OrderNetwork _orderNetwork = OrderNetwork();
-  
+
   final currencyFormatter = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
 
   // Define order status constants to match API values
@@ -30,9 +30,9 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
   static const String STATUS_SHIPPED = 'SHIPPED';
   static const String STATUS_DELIVERED = 'DELIVERED';
   static const String STATUS_CANCELLED = 'CANCELLED';
-  
-  static const Color primaryColor = Color(0xFF1E88E5); // Blue  
-  static const Color accentColor = Color(0xFF1E88E5);  //  Blue strong
+
+  static const Color primaryColor = Color(0xFF1E88E5); // Blue
+  static const Color accentColor = Color(0xFF1E88E5); //  Blue strong
   static const Color backgroundColor = Color(0xFFF5F7FA); // Light gray
   static const Color cardColor = Colors.white;
   static const Color textPrimaryColor = Color(0xFF263238); // Dark blue-gray
@@ -48,21 +48,22 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
   Future<void> _fetchOrders() async {
     try {
       if (!mounted) return;
-      
+
       setState(() {
         _isLoading = true;
       });
-      
+
       final result = await _orderNetwork.getOrderList();
-      
+
       if (!mounted) return;
-      
+
       setState(() {
         _orders = result['orders'];
         if (result['totalAmount'] != null) {
-          _totalAmount = result['totalAmount'] is double 
-              ? result['totalAmount'] 
-              : (result['totalAmount'] as num).toDouble();
+          _totalAmount =
+              result['totalAmount'] is double
+                  ? result['totalAmount']
+                  : (result['totalAmount'] as num).toDouble();
         }
         _totalPages = result['totalPages'] ?? 0;
         _totalOrders = result['totalElements'] ?? 0;
@@ -72,11 +73,11 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
     } catch (e) {
       print('Error fetching orders: $e');
       if (!mounted) return;
-      
+
       setState(() {
         _isLoading = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -124,12 +125,12 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
         ),
       );
     }
-    
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
         title: Text(
-          'Quản lý đơn hàng', 
+          'Quản lý đơn hàng',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -137,7 +138,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
           ),
         ),
         elevation: 0,
-        backgroundColor: primaryColor,
+        backgroundColor: Color(0xFF1A237E),
         iconTheme: IconThemeData(color: Colors.white),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, size: 20),
@@ -164,11 +165,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  primaryColor,
-                  primaryColor.withOpacity(0.8),
-                  primaryColor.withOpacity(0.0),
-                ],
+                colors: [Color(0xFF1A237E), Color(0xFF1A237E)],
               ),
             ),
             child: Padding(
@@ -192,7 +189,11 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 18),
+                        Icon(
+                          Icons.shopping_bag_outlined,
+                          color: Colors.white,
+                          size: 18,
+                        ),
                         SizedBox(width: 8),
                         Text(
                           'Tổng: ${_totalOrders} đơn',
@@ -208,7 +209,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
               ),
             ),
           ),
-          
+
           // Tab Bar - Improved design
           Container(
             margin: EdgeInsets.symmetric(horizontal: 16.0),
@@ -228,18 +229,12 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
               indicator: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 gradient: LinearGradient(
-                  colors: [
-                    accentColor,
-                    accentColor.withOpacity(0.8),
-                  ],
+                  colors: [Color(0xFF1A237E), Color(0xFF1A237E)],
                 ),
               ),
               labelColor: Colors.white,
               unselectedLabelColor: textPrimaryColor.withOpacity(0.7),
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-              ),
+              labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
               unselectedLabelStyle: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 13,
@@ -251,7 +246,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
               tabs: [
                 Tab(
                   child: Container(
-                    width: 50, 
+                    width: 50,
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     alignment: Alignment.center,
                     child: Text('Tất cả'),
@@ -259,7 +254,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                 ),
                 Tab(
                   child: Container(
-                    width: 90, 
+                    width: 90,
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     alignment: Alignment.center,
                     child: Text('Chờ xác nhận'),
@@ -267,7 +262,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                 ),
                 Tab(
                   child: Container(
-                    width: 90, 
+                    width: 90,
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     alignment: Alignment.center,
                     child: Text('Đã xác nhận'),
@@ -275,7 +270,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                 ),
                 Tab(
                   child: Container(
-                    width: 75, 
+                    width: 75,
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     alignment: Alignment.center,
                     child: Text('Đang giao'),
@@ -283,7 +278,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                 ),
                 Tab(
                   child: Container(
-                    width: 60, 
+                    width: 60,
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     alignment: Alignment.center,
                     child: Text('Đã giao'),
@@ -291,7 +286,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                 ),
                 Tab(
                   child: Container(
-                    width: 60, 
+                    width: 60,
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     alignment: Alignment.center,
                     child: Text('Đã hủy'),
@@ -300,7 +295,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
               ],
             ),
           ),
-          
+
           SizedBox(height: 16),
 
           // Tab Bar View
@@ -321,7 +316,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _fetchOrders,
-        backgroundColor: accentColor,
+        backgroundColor: Color(0xFF1A237E),
         child: Icon(Icons.refresh),
         tooltip: 'Refresh orders',
         elevation: 4,
@@ -331,9 +326,10 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
 
   // Method to build order list based on status - Updated to match API status values
   Widget _buildOrderList(String status) {
-    final filteredOrders = status == STATUS_ALL
-        ? _orders
-        : _orders.where((order) => order.status == status).toList();
+    final filteredOrders =
+        status == STATUS_ALL
+            ? _orders
+            : _orders.where((order) => order.status == status).toList();
 
     if (filteredOrders.isEmpty) {
       return Center(
@@ -341,8 +337,8 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.inbox_outlined, 
-              size: 80, 
+              Icons.inbox_outlined,
+              size: 80,
               color: textSecondaryColor.withOpacity(0.5),
             ),
             SizedBox(height: 16),
@@ -448,7 +444,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                     ],
                   ),
                 ),
-                
+
                 // Main content
                 Padding(
                   padding: EdgeInsets.all(16),
@@ -461,30 +457,37 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.qr_code, size: 16, color: primaryColor),
+                              Icon(
+                                Icons.qr_code,
+                                size: 16,
+                                color: Color(0xFF1A237E),
+                              ),
                               SizedBox(width: 6),
                               Text(
                                 'ID: ${order.id.substring(0, min(8, order.id.length))}...',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
-                                  color: primaryColor,
+                                  color: Color(0xFF1A237E),
                                 ),
                               ),
                             ],
                           ),
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
-                              color: primaryColor.withOpacity(0.1),
+                              color: Color(0xFF1A237E).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
                               children: [
                                 Icon(
-                                  Icons.shopping_bag_outlined, 
-                                  size: 14, 
-                                  color: primaryColor,
+                                  Icons.shopping_bag_outlined,
+                                  size: 14,
+                                  color: Color(0xFF1A237E),
                                 ),
                                 SizedBox(width: 4),
                                 Text(
@@ -492,7 +495,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                                   style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w500,
-                                    color: primaryColor,
+                                    color: Color(0xFF1A237E),
                                   ),
                                 ),
                               ],
@@ -500,9 +503,9 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                           ),
                         ],
                       ),
-                      
+
                       SizedBox(height: 16),
-                      
+
                       // Customer info
                       Row(
                         children: [
@@ -510,13 +513,13 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                             width: 36,
                             height: 36,
                             decoration: BoxDecoration(
-                              color: accentColor.withOpacity(0.1),
+                              color: Color(0xFF1A237E).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(18),
                             ),
                             child: Icon(
                               Icons.person_outline,
                               size: 20,
-                              color: accentColor,
+                              color: Color(0xFF1A237E),
                             ),
                           ),
                           SizedBox(width: 12),
@@ -547,9 +550,9 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                           ),
                         ],
                       ),
-                      
+
                       SizedBox(height: 16),
-                      
+
                       // Product info
                       Row(
                         children: [
@@ -592,14 +595,14 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                           ),
                         ],
                       ),
-                      
+
                       SizedBox(height: 16),
-                      
+
                       // Divider
                       Divider(height: 1, color: Colors.grey.withOpacity(0.2)),
-                      
+
                       SizedBox(height: 16),
-                      
+
                       // Total amount and actions
                       Row(
                         children: [
@@ -619,7 +622,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
-                                  color: accentColor,
+                                  color: Color(0xFF1A237E),
                                 ),
                               ),
                             ],
@@ -631,31 +634,38 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
                               final result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => OrderDetailsPage(order: order),
+                                  builder:
+                                      (context) =>
+                                          OrderDetailsPage(order: order),
                                 ),
                               );
-                              
+
                               // Check if we got a deletion result back
                               if (result is Map && result['deleted'] == true) {
                                 // Show success message in this screen
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(result['message'] ?? 'Đơn hàng đã được xóa thành công'),
+                                    content: Text(
+                                      result['message'] ??
+                                          'Đơn hàng đã được xóa thành công',
+                                    ),
                                     backgroundColor: Colors.green,
                                     behavior: SnackBarBehavior.floating,
                                   ),
                                 );
-                                
+
                                 // Refresh the order list
                                 _fetchOrders();
                               }
                             },
                             style: TextButton.styleFrom(
-                              foregroundColor: primaryColor,
+                              foregroundColor: Color(0xFF1A237E),
                               padding: EdgeInsets.symmetric(horizontal: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                side: BorderSide(color: primaryColor.withOpacity(0.3)),
+                                side: BorderSide(
+                                  color: Color(0xFF1A237E).withOpacity(0.3),
+                                ),
                               ),
                             ),
                             child: Text('Chi tiết'),
@@ -676,27 +686,45 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
   // Update status dialog to match API status values
   void _showUpdateStatusDialog(Order order) {
     String selectedStatus = order.status;
-    
+
     // Define available next statuses based on current status
     List<String> availableStatuses = [];
-    
+
     switch (order.status) {
       case STATUS_PENDING:
-        availableStatuses = [STATUS_PENDING, STATUS_CONFIRMED, STATUS_CANCELLED];
+        availableStatuses = [
+          STATUS_PENDING,
+          STATUS_CONFIRMED,
+          STATUS_CANCELLED,
+        ];
         break;
       case STATUS_CONFIRMED:
-        availableStatuses = [STATUS_CONFIRMED, STATUS_SHIPPED, STATUS_CANCELLED];
+        availableStatuses = [
+          STATUS_CONFIRMED,
+          STATUS_SHIPPED,
+          STATUS_CANCELLED,
+        ];
         break;
       case STATUS_SHIPPED:
-        availableStatuses = [STATUS_SHIPPED, STATUS_DELIVERED, STATUS_CANCELLED];
+        availableStatuses = [
+          STATUS_SHIPPED,
+          STATUS_DELIVERED,
+          STATUS_CANCELLED,
+        ];
         break;
       case STATUS_DELIVERED:
         availableStatuses = [STATUS_DELIVERED]; // Cannot change once delivered
         break;
       default:
-        availableStatuses = [STATUS_PENDING, STATUS_CONFIRMED, STATUS_SHIPPED, STATUS_DELIVERED, STATUS_CANCELLED];
+        availableStatuses = [
+          STATUS_PENDING,
+          STATUS_CONFIRMED,
+          STATUS_SHIPPED,
+          STATUS_DELIVERED,
+          STATUS_CANCELLED,
+        ];
     }
-    
+
     // Define colors for each status
     Map<String, Color> statusColors = {
       STATUS_PENDING: Color(0xFFF39C12),
@@ -705,7 +733,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
       STATUS_DELIVERED: Color(0xFF2ECC71),
       STATUS_CANCELLED: Color(0xFFE74C3C),
     };
-    
+
     // Define icons for each status
     Map<String, IconData> statusIcons = {
       STATUS_PENDING: Icons.hourglass_empty,
@@ -714,99 +742,113 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
       STATUS_DELIVERED: Icons.check_circle,
       STATUS_CANCELLED: Icons.cancel,
     };
-    
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          'Cập nhật trạng thái đơn hàng',
-          style: TextStyle(
-            color: primaryColor,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              width: double.maxFinite,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: availableStatuses.map((status) {
-                  return RadioListTile<String>(
-                    title: Row(
-                      children: [
-                        Icon(statusIcons[status], size: 18, color: statusColors[status]),
-                        SizedBox(width: 8),
-                        Text(
-                          _getStatusText(status),
-                          style: TextStyle(
-                            fontWeight: selectedStatus == status ? FontWeight.bold : FontWeight.normal,
-                            color: selectedStatus == status ? statusColors[status] : textPrimaryColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    value: status,
-                    groupValue: selectedStatus,
-                    activeColor: statusColors[status],
-                    onChanged: (value) {
-                      setState(() {
-                        selectedStatus = value!;
-                      });
-                    },
-                  );
-                }).toList(),
-              ),
-            );
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            style: TextButton.styleFrom(
-              foregroundColor: textSecondaryColor,
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Text('Hủy'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // Here you would call an API to update the order status
-              // For now, just show a success message
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    children: [
-                      Icon(Icons.check_circle, color: Colors.white),
-                      SizedBox(width: 12),
-                      Text('Đã cập nhật trạng thái đơn hàng'),
-                    ],
+            title: Text(
+              'Cập nhật trạng thái đơn hàng',
+              style: TextStyle(
+                color: primaryColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Container(
+                  width: double.maxFinite,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children:
+                        availableStatuses.map((status) {
+                          return RadioListTile<String>(
+                            title: Row(
+                              children: [
+                                Icon(
+                                  statusIcons[status],
+                                  size: 18,
+                                  color: statusColors[status],
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  _getStatusText(status),
+                                  style: TextStyle(
+                                    fontWeight:
+                                        selectedStatus == status
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                    color:
+                                        selectedStatus == status
+                                            ? statusColors[status]
+                                            : textPrimaryColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            value: status,
+                            groupValue: selectedStatus,
+                            activeColor: statusColors[status],
+                            onChanged: (value) {
+                              setState(() {
+                                selectedStatus = value!;
+                              });
+                            },
+                          );
+                        }).toList(),
                   ),
+                );
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(
+                  foregroundColor: textSecondaryColor,
+                ),
+                child: Text('Hủy'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  // Here you would call an API to update the order status
+                  // For now, just show a success message
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          Icon(Icons.check_circle, color: Colors.white),
+                          SizedBox(width: 12),
+                          Text('Đã cập nhật trạng thái đơn hàng'),
+                        ],
+                      ),
+                      backgroundColor: accentColor,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  );
+                  // Refresh the order list to show the updated status
+                  _fetchOrders();
+                },
+                style: ElevatedButton.styleFrom(
                   backgroundColor: accentColor,
-                  behavior: SnackBarBehavior.floating,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-              );
-              // Refresh the order list to show the updated status
-              _fetchOrders();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: accentColor,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                child: Text('Cập nhật'),
               ),
-            ),
-            child: Text('Cập nhật'),
+            ],
           ),
-        ],
-      ),
     );
   }
-  
+
   String _getStatusText(String status) {
     switch (status) {
       case STATUS_PENDING:
