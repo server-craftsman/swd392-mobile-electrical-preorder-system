@@ -130,6 +130,31 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: backgroundColor,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Đang tải dữ liệu...',
+                style: TextStyle(
+                  color: textSecondaryColor,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -144,12 +169,13 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
         elevation: 0,
         backgroundColor: primaryColor,
         iconTheme: IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, size: 20),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, size: 20),
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        // ),s
+        centerTitle: true,
         actions: [
           IconButton(
             icon: Icon(Icons.person_add, color: Colors.white),
@@ -299,38 +325,10 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
           Expanded(child: _buildUserList()),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: "userListRefreshButton",
-        onPressed: _fetchUsers,
-        backgroundColor: accentColor,
-        child: Icon(Icons.refresh),
-        tooltip: 'Làm mới',
-      ),
     );
   }
 
   Widget _buildUserList() {
-    if (_isLoading) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(accentColor),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Đang tải danh sách khách hàng...',
-              style: TextStyle(
-                color: textSecondaryColor,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
     if (_errorMessage.isNotEmpty) {
       return Center(
         child: Column(
@@ -411,13 +409,22 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
       );
     }
 
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      itemCount: users.length,
-      itemBuilder: (context, index) {
-        final user = users[index];
-        return _buildUserCard(user);
+    return RefreshIndicator(
+      onRefresh: () async {
+        await _fetchUsers();
       },
+      color: accentColor,
+      backgroundColor: Colors.white,
+      strokeWidth: 3,
+      displacement: 50,
+      child: ListView.builder(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        itemCount: users.length,
+        itemBuilder: (context, index) {
+          final user = users[index];
+          return _buildUserCard(user);
+        },
+      ),
     );
   }
 

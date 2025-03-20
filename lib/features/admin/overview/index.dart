@@ -93,7 +93,7 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: DashboardColors.background,
       appBar: AppBar(
         title: Text(
-          'Dashboard',
+          'Trang chủ',
           style: GoogleFonts.montserrat(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -102,13 +102,13 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
         backgroundColor: DashboardColors.primary,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: _fetchOrderData,
-            tooltip: 'Làm mới dữ liệu',
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.refresh),
+        //     onPressed: _fetchOrderData,
+        //     tooltip: 'Làm mới dữ liệu',
+        //   ),
+        // ],
       ),
       body: Column(
         children: [
@@ -235,13 +235,13 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: "dashboardRefreshButton",
-        onPressed: _fetchOrderData,
-        backgroundColor: DashboardColors.secondary,
-        child: Icon(Icons.refresh),
-        tooltip: 'Làm mới dữ liệu',
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   heroTag: "dashboardRefreshButton",
+      //   onPressed: _fetchOrderData,
+      //   backgroundColor: DashboardColors.secondary,
+      //   child: Icon(Icons.refresh),
+      //   tooltip: 'Làm mới dữ liệu',
+      // ),
     );
   }
 }

@@ -5,7 +5,9 @@ class TokenService {
   static Future<void> saveAccessToken(String accessToken) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('accessToken', accessToken);
-    print('Token saved: ${accessToken.substring(0, min(10, accessToken.length))}...');
+    print(
+      'Token saved: ${accessToken.substring(0, min(10, accessToken.length))}...',
+    );
   }
 
   static Future<Map<String, dynamic>?> decodeAccessToken(
@@ -27,7 +29,23 @@ class TokenService {
       final normalized = base64Url.normalize(payload);
       final decoded = utf8.decode(base64Url.decode(normalized));
       final decodedJson = json.decode(decoded) as Map<String, dynamic>;
+
+      // Log important token data for debugging
       print('Token decoded successfully, role: ${decodedJson['role']}');
+      if (decodedJson.containsKey('id')) {
+        print('User ID from token: ${decodedJson['id']}');
+      } else if (decodedJson.containsKey('userId')) {
+        print('User ID from token: ${decodedJson['userId']}');
+        // Normalize the key to 'id' for consistency
+        decodedJson['id'] = decodedJson['userId'];
+      } else if (decodedJson.containsKey('sub')) {
+        print('User ID from token (sub): ${decodedJson['sub']}');
+        // Normalize the key to 'id' for consistency if sub contains the user ID
+        decodedJson['id'] = decodedJson['sub'];
+      } else {
+        print('Warning: No user ID found in token');
+      }
+
       return decodedJson;
     } catch (e) {
       print('Error decoding access token: $e');
@@ -39,13 +57,15 @@ class TokenService {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('accessToken');
     if (token != null) {
-      print('Token retrieved from storage: ${token.substring(0, min(10, token.length))}...');
+      print(
+        'Token retrieved from storage: ${token.substring(0, min(10, token.length))}...',
+      );
     } else {
       print('No token found in storage');
     }
     return token;
   }
-  
+
   static Future<Map<String, String>> getAuthHeaders() async {
     final token = await getAccessToken();
     if (token != null && token.isNotEmpty) {
@@ -55,9 +75,7 @@ class TokenService {
       };
     } else {
       print('Warning: No access token found for API request');
-      return {
-        'Content-Type': 'application/json',
-      };
+      return {'Content-Type': 'application/json'};
     }
   }
 }
