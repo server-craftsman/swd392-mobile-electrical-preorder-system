@@ -3,6 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile_electrical_preorder_system/core/middleware/token_middleware.dart';
 import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mobile_electrical_preorder_system/core/network/user/user_network.dart';
+import 'package:mobile_electrical_preorder_system/core/network/user/res/index.dart';
+import 'package:mobile_electrical_preorder_system/features/profile/partials/details.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -11,7 +14,9 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   Map<String, dynamic>? userData;
+  User? _currentUser;
   bool _isLoading = true;
+  final UserNetwork _userNetwork = UserNetwork();
 
   @override
   void initState() {
@@ -26,16 +31,58 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _loadUserData() async {
-    final accessToken = await TokenService.getAccessToken();
-    if (accessToken != null) {
-      final decodedToken = await TokenService.decodeAccessToken(accessToken);
-      if (mounted) {
-        setState(() {
-          userData = decodedToken;
-          _isLoading = false;
-        });
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final accessToken = await TokenService.getAccessToken();
+      if (accessToken != null) {
+        final decodedToken = await TokenService.decodeAccessToken(accessToken);
+
+        if (mounted) {
+          setState(() {
+            userData = decodedToken;
+          });
+        }
+
+        // Lấy ID người dùng từ token đã giải mã
+        final userId = decodedToken != null ? decodedToken['id'] : null;
+        if (userId != null) {
+          try {
+            // Gọi API để lấy thông tin chi tiết của người dùng
+            final user = await _userNetwork.getUserById(userId);
+
+            if (mounted) {
+              setState(() {
+                _currentUser = user;
+                _isLoading = false;
+              });
+            }
+          } catch (e) {
+            print('Error fetching user details: $e');
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+              });
+            }
+          }
+        } else {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
-    } else {
+    } catch (e) {
+      print('Error loading user data: $e');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -44,9 +91,22 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  String _getInitials(String name) {
+    if (name.isEmpty) return '';
+
+    List<String> nameParts = name.split(' ');
+    if (nameParts.length > 1) {
+      return nameParts.first[0].toUpperCase() + nameParts.last[0].toUpperCase();
+    } else {
+      return nameParts.first[0].toUpperCase();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String? userRole = userData?['role'];
+    String fullName = _currentUser?.fullname ?? userData?['fullName'] ?? 'User';
+    String email = _currentUser?.email ?? userData?['email'] ?? '';
 
     return Scaffold(
       body:
@@ -75,159 +135,164 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   // Main content
                   SafeArea(
-                    child: Column(
-                      children: [
-                        // Back button
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0, top: 8.0),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () {
-                                  if (userRole == 'ROLE_ADMIN') {
-                                    GoRouter.of(context).pop();
-                                  } else {
-                                    GoRouter.of(context).pop();
-                                  }
-                                },
-                                tooltip: 'Quay lại',
-                              ),
+                    child: RefreshIndicator(
+                      onRefresh: _loadUserData,
+                      color: Color(0xFF1A237E),
+                      backgroundColor: Colors.white,
+                      strokeWidth: 5,
+                      displacement: 60,
+                      child: Column(
+                        children: [
+                          // Back button
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16.0,
+                              top: 8.0,
                             ),
-                          ),
-                        ),
-
-                        // Profile header
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Column(
-                            children: [
-                              SizedBox(height: 5),
-                              // User avatar with border
-                              Container(
+                            child: Align(
+                              alignment: Alignment.topLeft,
+                              child: Container(
                                 decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.arrow_back,
                                     color: Colors.white,
-                                    width: 3,
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.15),
-                                      blurRadius: 10,
-                                      offset: Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: CircleAvatar(
-                                  radius: 45, // Reduced from 60
-                                  backgroundImage: AssetImage(
-                                    'assets/images/Tham-Nho/tham3.jpg',
-                                  ),
+                                  onPressed: () {
+                                    GoRouter.of(context).pop();
+                                  },
+                                  tooltip: 'Quay lại',
                                 ),
                               ),
-                              SizedBox(height: 8),
-                              // User name
-                              Text(
-                                userData?['fullName'] ??
-                                    'Admin', // Changed default text
-                                style: TextStyle(
-                                  fontSize: 22, // Reduced from 26
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.black26,
-                                      blurRadius: 2,
-                                      offset: Offset(0, 1),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 2),
-                              // User email
-                              Text(
-                                userData?['email'] ?? 'huyit2003@gmail.com',
-                                style: TextStyle(
-                                  fontSize: 14, // Reduced from 16
-                                  color: Colors.white.withOpacity(0.9),
-                                ),
-                              ),
-                              SizedBox(height: 15), // Reduced from 20
-                            ],
+                            ),
                           ),
-                        ),
 
-                        // Profile options
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(30),
-                                topRight: Radius.circular(30),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 10,
-                                  offset: Offset(0, -5),
-                                ),
-                              ],
-                            ),
-                            child: ListView(
-                              padding: EdgeInsets.only(top: 25),
+                          // Profile header
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Column(
                               children: [
-                                _buildProfileOption(
-                                  icon: Icons.person,
-                                  title: 'Thông tin chung',
-                                  color: Color(0xFF1A237E),
+                                SizedBox(height: 2),
+                                // User avatar with border
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 3,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.15),
+                                        blurRadius: 10,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child:
+                                      _currentUser != null &&
+                                              _currentUser!.avatar.isNotEmpty
+                                          ? CircleAvatar(
+                                            radius: 45,
+                                            backgroundImage: NetworkImage(
+                                              _currentUser!.avatar,
+                                            ),
+                                            backgroundColor: Color(
+                                              0xFF1A237E,
+                                            ).withOpacity(0.1),
+                                          )
+                                          : CircleAvatar(
+                                            radius: 45,
+                                            backgroundColor: Color(
+                                              0xFF1A237E,
+                                            ).withOpacity(0.2),
+                                            child: Text(
+                                              _getInitials(fullName),
+                                              style: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
                                 ),
-                                _buildProfileOption(
-                                  icon: Icons.apps,
-                                  title: 'Tài khoản và ứng dụng',
-                                  color: Color(0xFF3949AB),
+                                SizedBox(height: 5),
+                                // User name
+                                Text(
+                                  fullName,
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black26,
+                                        blurRadius: 2,
+                                        offset: Offset(0, 1),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                _buildProfileOption(
-                                  icon: Icons.security,
-                                  title: 'Bảo mật',
-                                  color: Color(0xFF5C6BC0),
+                                SizedBox(height: 2),
+                                // User email
+                                Text(
+                                  email,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white.withOpacity(0.9),
+                                  ),
                                 ),
-                                _buildProfileOption(
-                                  icon: Icons.upgrade,
-                                  title: 'Nâng cấp gói',
-                                  color: Color(0xFF7986CB),
-                                ),
-                                _buildProfileOption(
-                                  icon: Icons.payment,
-                                  title: 'Thanh toán',
-                                  color: Color(0xFF9FA8DA),
-                                ),
-                                _buildProfileOption(
-                                  icon: Icons.notifications,
-                                  title: 'Thông báo',
-                                  color: Color(0xFFC5CAE9),
-                                ),
-                                _buildProfileOption(
-                                  icon: Icons.logout,
-                                  title: 'Đăng xuất',
-                                  color: Colors.redAccent,
-                                  isLogout: true,
-                                ),
+                                SizedBox(height: 15),
                               ],
                             ),
                           ),
-                        ),
-                      ],
+
+                          // Profile options
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(30),
+                                  topRight: Radius.circular(30),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 10,
+                                    offset: Offset(0, -5),
+                                  ),
+                                ],
+                              ),
+                              child: ListView(
+                                padding: EdgeInsets.only(top: 25),
+                                children: [
+                                  _buildProfileOption(
+                                    icon: Icons.person,
+                                    title: 'Thông tin chung',
+                                    color: Color(0xFF1A237E),
+                                  ),
+                                  _buildProfileOption(
+                                    icon: Icons.notifications,
+                                    title: 'Thông báo',
+                                    color: Color(0xFF1A237E),
+                                  ),
+                                  _buildProfileOption(
+                                    icon: Icons.logout,
+                                    title: 'Đăng xuất',
+                                    color: Colors.redAccent,
+                                    isLogout: true,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -274,6 +339,17 @@ class _ProfilePageState extends State<ProfilePage> {
         onTap: () {
           if (isLogout) {
             _logout();
+          } else if (title == 'Thông tin chung') {
+            // Lấy userId từ userData hoặc _currentUser
+            String? userId = _currentUser?.id ?? userData?['id'];
+
+            // Điều hướng đến trang chi tiết thông tin người dùng
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => UserProfileDetailsPage(userId: userId),
+              ),
+            );
           }
           // Handle other options
         },
