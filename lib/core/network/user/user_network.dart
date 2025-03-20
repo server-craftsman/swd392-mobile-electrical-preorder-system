@@ -27,11 +27,23 @@ class UserNetwork {
     }
   }
 
-  Future<Map<String, dynamic>> getAllUser({int page = 0, int size = 10}) async {
+  Future<Map<String, dynamic>> getAllUser({
+    int page = 0,
+    int size = 10,
+    String? role,
+  }) async {
     try {
+      // Create query parameters map
+      final Map<String, dynamic> queryParams = {'page': page, 'size': size};
+
+      // Add role parameter if provided
+      if (role != null) {
+        queryParams['role'] = role;
+      }
+
       final response = await _apiClient.get(
         '/users',
-        queryParameters: {'page': page, 'size': size},
+        queryParameters: queryParams,
       );
 
       final responseData = response.data;

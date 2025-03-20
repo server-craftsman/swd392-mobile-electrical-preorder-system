@@ -21,6 +21,7 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
 
   // Filter settings
   String _selectedMonth = 'Tất cả';
+  String _selectedRole = 'Tất cả';
   final List<String> _months = [
     'Tất cả',
     'Tháng 1',
@@ -35,6 +36,12 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
     'Tháng 10',
     'Tháng 11',
     'Tháng 12',
+  ];
+  final List<String> _roles = [
+    'Tất cả',
+    'ROLE_ADMIN',
+    'ROLE_STAFF',
+    'ROLE_CUSTOMER',
   ];
   String _searchQuery = '';
 
@@ -60,7 +67,12 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
     });
 
     try {
-      final result = await _userNetwork.getAllUser(page: _currentPage);
+      // Call the API with the role parameter if a specific role is selected
+      final result = await _userNetwork.getAllUser(
+        page: _currentPage,
+        size: 10,
+        role: _selectedRole != 'Tất cả' ? _selectedRole : null,
+      );
 
       if (!mounted) return;
 
@@ -153,6 +165,46 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
             },
             tooltip: 'Thêm nhân viên mới',
           ),
+          // Role filter dropdown
+          Container(
+            margin: EdgeInsets.only(right: 10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _selectedRole,
+                dropdownColor: primaryColor,
+                icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+                style: TextStyle(color: Colors.white),
+                items:
+                    _roles.map((String role) {
+                      return DropdownMenuItem<String>(
+                        value: role,
+                        child: Row(
+                          children: [
+                            Icon(Icons.person, color: Colors.white, size: 16),
+                            SizedBox(width: 8),
+                            Text(role == 'Tất cả' ? role : _getRoleText(role)),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _selectedRole = newValue;
+                      // Fetch users with the new role filter
+                      _fetchUsers();
+                    });
+                  }
+                },
+              ),
+            ),
+          ),
+          // Month filter dropdown
           Container(
             margin: EdgeInsets.only(right: 16),
             decoration: BoxDecoration(
@@ -194,72 +246,56 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
             ),
           ),
         ],
-        // shape: RoundedRectangleBorder(
-        //   borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-        // ),
       ),
       body: Column(
         children: [
-          // Header gradient
           Container(
             height: 80,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  primaryColor,
-                  primaryColor.withOpacity(0.8),
-                  primaryColor.withOpacity(0.0),
-                ],
+                colors: [primaryColor, primaryColor.withOpacity(0.8)],
               ),
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16,
+              ),
               child: Row(
                 children: [
-                  Text(
-                    'Danh sách khách hàng',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: TextField(
+                      onChanged: _searchUsers,
+                      decoration: InputDecoration(
+                        hintText: 'Tìm kiếm khách hàng...',
+                        prefixIcon: Icon(Icons.search, color: accentColor),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                            color: Colors.grey.withOpacity(0.2),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(color: accentColor),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(vertical: 16),
+                      ),
                     ),
                   ),
-                  Spacer(),
                 ],
               ),
             ),
           ),
-
-          // Search bar
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: TextField(
-              onChanged: _searchUsers,
-              decoration: InputDecoration(
-                hintText: 'Tìm kiếm khách hàng...',
-                prefixIcon: Icon(Icons.search, color: accentColor),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(color: accentColor),
-                ),
-                contentPadding: EdgeInsets.symmetric(vertical: 16),
-              ),
-            ),
-          ),
-
-          // User list
           Expanded(child: _buildUserList()),
         ],
       ),
@@ -655,8 +691,8 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
         return 'Quản trị viên';
       case 'ROLE_CUSTOMER':
         return 'Khách hàng';
-      case 'ROLE_MANUFACTURER':
-        return 'Nhà sản xuất';
+      case 'ROLE_STAFF':
+        return 'Nhân viên';
       default:
         return role;
     }
