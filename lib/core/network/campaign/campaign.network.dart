@@ -17,6 +17,7 @@ class CampaignNetwork {
   static Future<CampaignResponse> getCampaignList({
     String? name,
     String? status,
+    String? direction,
   }) async {
     Map<String, dynamic> queryParams = {};
 
@@ -26,6 +27,10 @@ class CampaignNetwork {
 
     if (status != null && status.isNotEmpty) {
       queryParams['status'] = status;
+    }
+
+    if (direction != null && direction.isNotEmpty) {
+      queryParams['direction'] = direction;
     }
 
     final response = await ApiClient().get(

@@ -22,6 +22,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
   String _searchQuery = '';
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
+  String _sortDirection = 'DESC'; // Mặc định sắp xếp giảm dần (mới nhất trước)
 
   final OrderNetwork _orderNetwork = OrderNetwork();
 
@@ -96,7 +97,9 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
         _isLoading = true;
       });
 
-      final result = await _orderNetwork.getOrderList();
+      final result = await _orderNetwork.getOrderList(
+        sortDirection: _sortDirection,
+      );
 
       if (!mounted) return;
 
@@ -190,30 +193,6 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
         elevation: 0,
         backgroundColor: Color(0xFF1A237E),
         iconTheme: IconThemeData(color: Colors.white),
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back, size: 20),
-        //   onPressed: () {
-        //     if (_isSearching) {
-        //       _toggleSearch();
-        //     } else {
-        //       Navigator.pop(context);
-        //     }
-        //   },
-        // ),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(
-        //       _isSearching ? Icons.close : Icons.search,
-        //       color: Colors.white,
-        //     ),
-        //     onPressed: _toggleSearch,
-        //   ),
-        //   IconButton(
-        //     icon: Icon(Icons.refresh),
-        //     onPressed: _fetchOrders,
-        //     color: Colors.white,
-        //   ),
-        // ],
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
         ),
@@ -240,6 +219,34 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
             ),
           ),
         ),
+        actions: [
+          // Sort Direction Toggle Button
+          IconButton(
+            icon: Icon(
+              _sortDirection == 'DESC'
+                  ? Icons.arrow_downward
+                  : Icons.arrow_upward,
+              color: Colors.white,
+            ),
+            tooltip:
+                _sortDirection == 'DESC'
+                    ? 'Đang sắp xếp mới nhất trước (DESC)'
+                    : 'Đang sắp xếp cũ nhất trước (ASC)',
+            onPressed: () {
+              setState(() {
+                _sortDirection = _sortDirection == 'DESC' ? 'ASC' : 'DESC';
+                _fetchOrders(); // Tải lại dữ liệu với hướng sắp xếp mới
+              });
+            },
+          ),
+          IconButton(
+            icon: Icon(
+              _isSearching ? Icons.close : Icons.search,
+              color: Colors.white,
+            ),
+            onPressed: _toggleSearch,
+          ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -315,6 +322,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
       onRefresh: () async {
         await _fetchOrders();
       },
+      triggerMode: RefreshIndicatorTriggerMode.onEdge,
       color: accentColor,
       backgroundColor: Colors.white,
       strokeWidth: 3,
