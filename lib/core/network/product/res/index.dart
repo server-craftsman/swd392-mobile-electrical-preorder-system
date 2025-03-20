@@ -8,7 +8,7 @@ class Product {
   final String name;
   final String slug;
   final int quantity;
-  final String description;
+  final String? description;
   final double price;
   final int position;
   final String status;
@@ -24,7 +24,7 @@ class Product {
     required this.name,
     required this.slug,
     required this.quantity,
-    required this.description,
+    this.description,
     required this.price,
     required this.position,
     required this.status,
@@ -60,7 +60,7 @@ class Product {
       name: json['name'] ?? 'Unknown Product',
       slug: json['slug'] ?? '',
       quantity: json['quantity'] ?? 0,
-      description: json['description'] ?? '',
+      description: json['description'] ?? null,
       price: (json['price'] ?? 0).toDouble(),
       position: json['position'] ?? 0,
       status: json['status'] ?? 'UNAVAILABLE',

@@ -4,6 +4,7 @@ import 'package:mobile_electrical_preorder_system/core/network/campaign/res/inde
 import 'partials/create_campaign.dart';
 import '../../../core/utils/helper.dart';
 import 'dart:ui';
+import 'partials/campaign_details.dart';
 
 class ManageCampaignPage extends StatefulWidget {
   @override
@@ -158,6 +159,18 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
     }
   }
 
+  void _openCampaignDetails(String campaignId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CampaignDetailsPage(campaignId: campaignId),
+      ),
+    ).then((_) {
+      // Refresh the list when returning from details page
+      _refreshCampaigns();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // If tab controller is not initialized yet, show loading
@@ -309,7 +322,7 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
                   );
                 }
 
-                if (!snapshot.hasData || snapshot.data!.data.content.isEmpty) {
+                if (!snapshot.hasData || snapshot.data!.data is! CampaignData) {
                   return Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -333,7 +346,7 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
                   );
                 }
 
-                final campaigns = snapshot.data!.data.content;
+                final campaigns = (snapshot.data!.data as CampaignData).content;
 
                 if (campaigns.isEmpty) {
                   return Center(
@@ -378,10 +391,10 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
                       if (campaign.status == 'CANCELED') {
                         statusText = 'Đã hủy';
                         statusColor = _canceledColor;
-                      } else if (endDate.isBefore(now)) {
+                      } else if (endDate != null && endDate.isBefore(now)) {
                         statusText = 'Đã hoàn thành';
                         statusColor = _completedColor;
-                      } else if (startDate.isBefore(now)) {
+                      } else if (startDate != null && startDate.isBefore(now)) {
                         statusText = 'Đang hoạt động';
                         statusColor = _activeColor;
                       } else {
@@ -402,223 +415,234 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
                             ),
                           ],
                         ),
-                        child: ClipRRect(
+                        child: InkWell(
+                          onTap: () {
+                            _openCampaignDetails(campaign.id);
+                          },
                           borderRadius: BorderRadius.circular(16),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Campaign header with status
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                    vertical: 12,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: _primaryColor.withOpacity(0.03),
-                                    border: Border(
-                                      bottom: BorderSide(
-                                        color: Colors.grey.shade200,
-                                        width: 1,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Campaign header with status
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: _primaryColor.withOpacity(0.03),
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: Colors.grey.shade200,
+                                          width: 1,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          campaign.name,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: _textColor,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: statusColor.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(
-                                            30,
-                                          ),
-                                          border: Border.all(
-                                            color: statusColor,
-                                            width: 1,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            campaign.name,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: _textColor,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
-                                        child: Text(
-                                          statusText,
-                                          style: TextStyle(
-                                            color: statusColor,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12,
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 6,
                                           ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                // Campaign details
-                                Padding(
-                                  padding: EdgeInsets.all(20),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // Product info
-                                      Row(
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                              color: _accentColor.withOpacity(
-                                                0.1,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
+                                          decoration: BoxDecoration(
+                                            color: statusColor.withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(
+                                              30,
                                             ),
-                                            child: Icon(
-                                              Icons.devices,
-                                              color: _accentColor,
-                                              size: 24,
-                                            ),
-                                          ),
-                                          SizedBox(width: 16),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Sản phẩm',
-                                                  style: TextStyle(
-                                                    color: _secondaryTextColor,
-                                                    fontSize: 13,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 4),
-                                                Text(
-                                                  campaign.product.name,
-                                                  style: TextStyle(
-                                                    color: _textColor,
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-
-                                      SizedBox(height: 16),
-
-                                      // Date range
-                                      Row(
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                              color: _primaryColor.withOpacity(
-                                                0.1,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            child: Icon(
-                                              Icons.date_range,
-                                              color: _primaryColor,
-                                              size: 24,
-                                            ),
-                                          ),
-                                          SizedBox(width: 16),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Thời gian',
-                                                  style: TextStyle(
-                                                    color: _secondaryTextColor,
-                                                    fontSize: 13,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 4),
-                                                Text(
-                                                  '${_formatDate(startDate)} - ${_formatDate(endDate)}',
-                                                  style: TextStyle(
-                                                    color: _textColor,
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-
-                                      SizedBox(height: 16),
-
-                                      // Quantity
-                                      Row(
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                              color: statusColor.withOpacity(
-                                                0.1,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            child: Icon(
-                                              Icons.inventory_2,
+                                            border: Border.all(
                                               color: statusColor,
-                                              size: 24,
+                                              width: 1,
                                             ),
                                           ),
-                                          SizedBox(width: 16),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Số lượng',
-                                                  style: TextStyle(
-                                                    color: _secondaryTextColor,
-                                                    fontSize: 13,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 4),
-                                                Text(
-                                                  'Tối thiểu: ${campaign.minQuantity} - Tối đa: ${campaign.maxQuantity}',
-                                                  style: TextStyle(
-                                                    color: _textColor,
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              ],
+                                          child: Text(
+                                            statusText,
+                                            style: TextStyle(
+                                              color: statusColor,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12,
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+
+                                  // Campaign details
+                                  Padding(
+                                    padding: EdgeInsets.all(20),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Product info
+                                        Row(
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                color: _accentColor.withOpacity(
+                                                  0.1,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: Icon(
+                                                Icons.devices,
+                                                color: _accentColor,
+                                                size: 24,
+                                              ),
+                                            ),
+                                            SizedBox(width: 16),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Sản phẩm',
+                                                    style: TextStyle(
+                                                      color:
+                                                          _secondaryTextColor,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 4),
+                                                  Text(
+                                                    campaign.product.name,
+                                                    style: TextStyle(
+                                                      color: _textColor,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+
+                                        SizedBox(height: 16),
+
+                                        // Date range
+                                        Row(
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                color: _primaryColor
+                                                    .withOpacity(0.1),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: Icon(
+                                                Icons.date_range,
+                                                color: _primaryColor,
+                                                size: 24,
+                                              ),
+                                            ),
+                                            SizedBox(width: 16),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Thời gian',
+                                                    style: TextStyle(
+                                                      color:
+                                                          _secondaryTextColor,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 4),
+                                                  Text(
+                                                    '${_formatDate(startDate ?? DateTime.now())} - ${_formatDate(endDate ?? DateTime.now())}',
+                                                    style: TextStyle(
+                                                      color: _textColor,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+
+                                        SizedBox(height: 16),
+
+                                        // Quantity
+                                        Row(
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                color: statusColor.withOpacity(
+                                                  0.1,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: Icon(
+                                                Icons.inventory_2,
+                                                color: statusColor,
+                                                size: 24,
+                                              ),
+                                            ),
+                                            SizedBox(width: 16),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Số lượng',
+                                                    style: TextStyle(
+                                                      color:
+                                                          _secondaryTextColor,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 4),
+                                                  Text(
+                                                    'Tối thiểu: ${campaign.minQuantity} - Tối đa: ${campaign.maxQuantity}',
+                                                    style: TextStyle(
+                                                      color: _textColor,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

@@ -3,6 +3,16 @@ import 'package:mobile_electrical_preorder_system/core/network/config/api_client
 import './res/index.dart';
 import './req/index.dart';
 
+class SingleCampaignResponse {
+  final Campaign campaign;
+
+  SingleCampaignResponse({required this.campaign});
+
+  factory SingleCampaignResponse.fromJson(Map<String, dynamic> json) {
+    return SingleCampaignResponse(campaign: Campaign.fromJson(json['data']));
+  }
+}
+
 class CampaignNetwork {
   static Future<CampaignResponse> getCampaignList({
     String? name,
@@ -26,11 +36,21 @@ class CampaignNetwork {
     return CampaignResponse.fromJson(response.data);
   }
 
-  static Future<CampaignResponse> getCampaignById(int campaignId) async {
-    // Fix: Use get method instead of getById with the correct path format
-    final response = await ApiClient().get('/campaigns/$campaignId');
+  static Future<SingleCampaignResponse> getCampaignById(
+    String campaignId,
+  ) async {
+    try {
+      final response = await ApiClient().get('/campaigns/$campaignId');
 
-    return CampaignResponse.fromJson(response.data);
+      if (response.data == null) {
+        throw Exception('No data received from server');
+      }
+
+      return SingleCampaignResponse.fromJson(response.data);
+    } catch (e) {
+      print('Error fetching campaign: $e');
+      throw Exception('Failed to retrieve campaign: $e');
+    }
   }
 
   // Add this method to your CampaignNetwork class
@@ -51,9 +71,13 @@ class CampaignNetwork {
   }
 
   // Add this method to your CampaignNetwork class
-  static Future<Null> cancelCampaign(int campaignId) async {
-    // Fix: Check if the API client has a remove method, otherwise use delete
-    await ApiClient().remove('/campaigns', campaignId.toString());
-    return;
+  static Future<void> cancelCampaign(String campaignId) async {
+    try {
+      await ApiClient().remove('/campaigns', campaignId);
+      print('Campaign cancelled successfully: $campaignId');
+    } catch (e) {
+      print('Error cancelling campaign: $e');
+      throw Exception('Failed to cancel campaign: $e');
+    }
   }
 }
