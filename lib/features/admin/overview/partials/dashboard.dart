@@ -107,17 +107,22 @@ class _OverviewPageState extends State<OverviewPage> {
           const SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: [_buildLuxuryProductCount()],
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: _buildLuxuryProductCount(),
+                ),
+              ),
+            ],
           ),
-
-          const SizedBox(height: 30),
 
           // Order Statistics Section
-          const SectionHeader(
-            title: 'Thống kê đơn hàng',
-            icon: Icons.shopping_cart,
-          ),
-          const SizedBox(height: 15),
+          // const SectionHeader(
+          //   title: 'Thống kê đơn hàng',
+          //   icon: Icons.shopping_cart,
+          // ),
+          // const SizedBox(height: 15),
           // Row(
           //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           //   children: [
@@ -148,7 +153,6 @@ class _OverviewPageState extends State<OverviewPage> {
           //     ),
           //   ],
           // ),
-          const SizedBox(height: 20),
 
           // Campaign Statistics Section
           const SectionHeader(
@@ -157,7 +161,7 @@ class _OverviewPageState extends State<OverviewPage> {
           ),
           const SizedBox(height: 15),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildCampaignCard(
                 title: 'Chiến dịch đang hoạt động',
@@ -175,25 +179,30 @@ class _OverviewPageState extends State<OverviewPage> {
           ),
           const SizedBox(height: 15),
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildCampaignCard(
-                title: 'Chiến dịch bị hủy',
-                future: _canceledCampaignCountFuture,
-                color: Colors.deepOrange,
-                icon: Icons.cancel_presentation,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: _buildCampaignCard(
+                    title: 'Chiến dịch bị hủy',
+                    future: _canceledCampaignCountFuture,
+                    color: Colors.deepOrange,
+                    icon: Icons.cancel_presentation,
+                  ),
+                ),
               ),
             ],
           ),
 
           const SizedBox(height: 30),
 
-          // Recent Orders Section
-          const SectionHeader(
-            title: 'Đơn hàng gần đây',
-            icon: Icons.receipt_long,
-          ),
-          const SizedBox(height: 15),
+          // // Recent Orders Section
+          // const SectionHeader(
+          //   title: 'Đơn hàng gần đây',
+          //   icon: Icons.receipt_long,
+          // ),
+          // const SizedBox(height: 15),
           // _buildRecentOrdersList(),
         ],
       ),
