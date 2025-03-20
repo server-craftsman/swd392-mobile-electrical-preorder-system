@@ -169,15 +169,16 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
         elevation: 0,
         backgroundColor: primaryColor,
         iconTheme: IconThemeData(color: Colors.white),
+
         // leading: IconButton(
         //   icon: Icon(Icons.arrow_back, size: 20),
         //   onPressed: () {
         //     Navigator.pop(context);
         //   },
-        // ),s
-        centerTitle: true,
-        actions: [
-          IconButton(
+        // ),
+        leading: Container(
+          margin: EdgeInsets.only(left: 10),
+          child: IconButton(
             icon: Icon(Icons.person_add, color: Colors.white),
             onPressed: () {
               Navigator.push(
@@ -191,6 +192,9 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
             },
             tooltip: 'Thêm nhân viên mới',
           ),
+        ),
+
+        actions: [
           // Role filter dropdown
           Container(
             margin: EdgeInsets.only(right: 10),
@@ -242,7 +246,10 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
               child: DropdownButton<String>(
                 value: _selectedMonth,
                 dropdownColor: primaryColor,
-                icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+                icon: Icon(
+                  Icons.filter_alt,
+                  color: Colors.white,
+                ), // Updated icon for a more professional look
                 style: TextStyle(color: Colors.white),
                 items:
                     _months.map((String month) {

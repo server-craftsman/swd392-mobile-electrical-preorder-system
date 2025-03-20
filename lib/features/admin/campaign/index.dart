@@ -18,6 +18,7 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   bool _isSearching = false;
+  String _sortDirection = 'DESC'; // Mặc định sắp xếp giảm dần (mới nhất trước)
 
   // Luxury color palette
   final Color _primaryColor = Color(0xFF1A237E); // Deep navy blue
@@ -36,6 +37,7 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
   // Define campaign status types
   final List<String> _tabs = [
     'Tất cả',
+    'Sắp diễn ra',
     'Đang hoạt động',
     'Đã hoàn thành',
     'Đã hủy',
@@ -44,9 +46,10 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
   // Map tab indices to API status values
   final Map<int, String?> _statusMap = {
     0: null, // All
-    1: 'ACTIVE',
-    2: 'COMPLETED',
-    3: 'CANCELLED',
+    1: 'SCHEDULED',
+    2: 'ACTIVE',
+    3: 'COMPLETED',
+    4: 'CANCELLED',
   };
 
   @override
@@ -102,6 +105,7 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
       _campaignsFuture = CampaignNetwork.getCampaignList(
         name: _searchQuery.isEmpty ? null : _searchQuery,
         status: status,
+        direction: _sortDirection,
       );
     });
   }
@@ -227,29 +231,33 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
         ),
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back, color: Colors.white),
-        //   onPressed: () {
-        //     if (_isSearching) {
-        //       _toggleSearch();
-        //     } else {
-        //       Helper.navigateTo(context, '/admin/dashboard');
-        //     }
-        //   },
-        // ),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(
-        //       _isSearching ? Icons.close : Icons.search,
-        //       color: Colors.white,
-        //     ),
-        //     onPressed: _toggleSearch,
-        //   ),
-        //   IconButton(
-        //     icon: Icon(Icons.refresh, color: Colors.white),
-        //     onPressed: _refreshCampaigns,
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            icon: Icon(
+              _isSearching ? Icons.close : Icons.search,
+              color: Colors.white,
+            ),
+            onPressed: _toggleSearch,
+          ),
+          IconButton(
+            icon: Icon(
+              _sortDirection == 'DESC'
+                  ? Icons.arrow_downward
+                  : Icons.arrow_upward,
+              color: Colors.white,
+            ),
+            tooltip:
+                _sortDirection == 'DESC'
+                    ? 'Đang sắp xếp mới nhất trước (DESC)'
+                    : 'Đang sắp xếp cũ nhất trước (ASC)',
+            onPressed: () {
+              setState(() {
+                _sortDirection = _sortDirection == 'DESC' ? 'ASC' : 'DESC';
+                _refreshCampaigns(); // Tải lại dữ liệu với hướng sắp xếp mới
+              });
+            },
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(60),
           child: Container(
@@ -380,6 +388,7 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
                         _campaignsFuture = CampaignNetwork.getCampaignList(
                           name: _searchQuery.isEmpty ? null : _searchQuery,
                           status: _statusMap[tabIndex],
+                          direction: _sortDirection,
                         );
                       });
                     },
@@ -387,6 +396,7 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
                     backgroundColor: Colors.white,
                     strokeWidth: 3,
                     displacement: 50,
+                    triggerMode: RefreshIndicatorTriggerMode.onEdge,
                     child: ListView.builder(
                       itemCount: campaigns.length,
                       padding: EdgeInsets.symmetric(horizontal: 16),
@@ -678,6 +688,7 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
         onPressed: _openCreateCampaignDialog,
         child: Icon(Icons.add),
         backgroundColor: _accentColor,
+        tooltip: 'Tạo chiến dịch mới',
       ),
     );
   }
