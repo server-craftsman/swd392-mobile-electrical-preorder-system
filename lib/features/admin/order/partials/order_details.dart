@@ -171,12 +171,16 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         margin: EdgeInsets.only(bottom: 16),
         child: FloatingActionButton.extended(
           onPressed: () => _showDeleteConfirmDialog(context),
-          backgroundColor: dangerColor,
+          backgroundColor: Color.fromARGB(255, 255, 19, 15),
           elevation: 4,
-          icon: Icon(Icons.delete_rounded),
+          icon: Icon(Icons.delete_rounded, color: Colors.white),
           label: Text(
             'Xóa đơn hàng',
-            style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5),
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
           ),
         ),
       ),
@@ -960,7 +964,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                 Container(
                   padding: EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: dangerColor.withOpacity(0.1),
+                    color: Color.fromARGB(255, 255, 19, 15).withOpacity(0.1),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(16),
                       topRight: Radius.circular(16),
@@ -968,7 +972,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                   ),
                   child: Icon(
                     Icons.warning_amber_rounded,
-                    color: dangerColor,
+                    color: Color.fromARGB(255, 255, 19, 15),
                     size: 70,
                   ),
                 ),
@@ -1103,7 +1107,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         _scaffoldMessenger.showSnackBar(
           SnackBar(
             content: Text(result['message'] ?? 'Không thể xóa đơn hàng'),
-            backgroundColor: dangerColor,
+            backgroundColor: Color.fromARGB(255, 255, 19, 15),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1121,7 +1125,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
       _scaffoldMessenger.showSnackBar(
         SnackBar(
           content: Text('Lỗi xảy ra: ${e.toString()}'),
-          backgroundColor: dangerColor,
+          backgroundColor: Color.fromARGB(255, 255, 19, 15),
           behavior: SnackBarBehavior.floating,
         ),
       );

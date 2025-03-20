@@ -432,6 +432,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 15,
+                      color: const Color.fromARGB(255, 255, 255, 255),
                       letterSpacing: 0.5,
                     ),
                   ),
