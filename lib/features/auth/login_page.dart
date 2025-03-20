@@ -459,10 +459,23 @@ class _LoginPageState extends State<LoginPage>
       if (accessToken != null) {
         await TokenService.saveAccessToken(accessToken);
         print('Access Token: $accessToken');
+
+        // Save credentials if remember me is checked
+        if (_rememberMe) {
+          await _saveCredentials();
+        }
+
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
         final decodedToken = await TokenService.decodeAccessToken(accessToken);
         final role = decodedToken?['role'];
+
+        // Save user ID in shared preferences for easier access
+        if (decodedToken != null && decodedToken.containsKey('id')) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('userId', decodedToken['id'].toString());
+          print('Saved user ID: ${decodedToken['id']}');
+        }
 
         if (role != null) {
           switch (role) {

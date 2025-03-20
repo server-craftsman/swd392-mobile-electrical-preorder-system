@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mobile_electrical_preorder_system/core/utils/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile_electrical_preorder_system/core/middleware/token_middleware.dart';
+import 'package:mobile_electrical_preorder_system/core/network/user/user_network.dart';
+import 'package:mobile_electrical_preorder_system/core/network/user/res/index.dart';
 
 // Pages
 import 'package:mobile_electrical_preorder_system/features/admin/overview/index.dart';
@@ -18,6 +20,10 @@ class AdminLayout extends StatefulWidget {
 class _AdminLayoutState extends State<AdminLayout> {
   int _selectedIndex = 0;
   String _fullName = 'Admin';
+  String _userId = '';
+  User? _currentUser;
+  final UserNetwork _userNetwork = UserNetwork();
+  bool _isLoading = true;
 
   final List<Widget> _pages = [
     DashboardPage(),
@@ -52,6 +58,10 @@ class _AdminLayoutState extends State<AdminLayout> {
   }
 
   Future<void> _initializeData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     final prefs = await SharedPreferences.getInstance();
     final accessToken = await TokenService.getAccessToken();
 
@@ -61,12 +71,34 @@ class _AdminLayoutState extends State<AdminLayout> {
 
     if (accessToken != null) {
       final decodedToken = await TokenService.decodeAccessToken(accessToken);
-      if (decodedToken != null && decodedToken.containsKey('fullName')) {
-        setState(() {
+      if (decodedToken != null) {
+        // Set basic user info from token
+        if (decodedToken.containsKey('fullName')) {
           _fullName = decodedToken['fullName'];
-        });
+        }
+
+        // Get user ID from token and fetch complete user details
+        if (decodedToken.containsKey('id')) {
+          _userId = decodedToken['id'].toString();
+          try {
+            final userDetails = await _userNetwork.getUserById(_userId);
+            if (userDetails != null) {
+              setState(() {
+                _currentUser = userDetails;
+                // Update fullName with the one from complete user details
+                _fullName = userDetails.fullname;
+              });
+            }
+          } catch (e) {
+            print('Error fetching user details: $e');
+          }
+        }
       }
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<void> _logout() async {
@@ -85,6 +117,10 @@ class _AdminLayoutState extends State<AdminLayout> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       appBar: _buildAppBar(),
       body: IndexedStack(index: _selectedIndex, children: _pages),
@@ -109,26 +145,29 @@ class _AdminLayoutState extends State<AdminLayout> {
             ),
           ),
           SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Xin chào,',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Xin chào,',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              Text(
-                _fullName,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Color(0xFF1A237E),
+                Text(
+                  _fullName,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Color(0xFF1A237E),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -157,13 +196,22 @@ class _AdminLayoutState extends State<AdminLayout> {
   Widget _buildPopupMenu() {
     return PopupMenuButton<String>(
       offset: Offset(0, 60),
-      icon: CircleAvatar(
-        backgroundColor: Color(0xFF1A237E),
-        child: Text(
-          _fullName[0].toUpperCase(),
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
+      icon:
+          _currentUser?.avatar != null && _currentUser!.avatar.isNotEmpty
+              ? CircleAvatar(
+                backgroundImage: NetworkImage(_currentUser!.avatar),
+                backgroundColor: Color(0xFF1A237E).withOpacity(0.2),
+              )
+              : CircleAvatar(
+                backgroundColor: Color(0xFF1A237E),
+                child: Text(
+                  _getInitials(_fullName),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
       color: Colors.white,
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -231,5 +279,17 @@ class _AdminLayoutState extends State<AdminLayout> {
         onTap: _onItemTapped,
       ),
     );
+  }
+
+  // Helper method to get initials from name
+  String _getInitials(String name) {
+    if (name.isEmpty) return '';
+
+    List<String> nameParts = name.split(' ');
+    if (nameParts.length > 1) {
+      return nameParts.first[0].toUpperCase() + nameParts.last[0].toUpperCase();
+    } else {
+      return nameParts.first[0].toUpperCase();
+    }
   }
 }

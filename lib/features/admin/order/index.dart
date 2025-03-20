@@ -190,31 +190,30 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
         elevation: 0,
         backgroundColor: Color(0xFF1A237E),
         iconTheme: IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, size: 20),
-          onPressed: () {
-            if (_isSearching) {
-              _toggleSearch();
-            } else {
-              Navigator.pop(context);
-            }
-          },
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(
-              _isSearching ? Icons.close : Icons.search,
-              color: Colors.white,
-            ),
-            onPressed: _toggleSearch,
-          ),
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: _fetchOrders,
-            color: Colors.white,
-          ),
-        ],
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, size: 20),
+        //   onPressed: () {
+        //     if (_isSearching) {
+        //       _toggleSearch();
+        //     } else {
+        //       Navigator.pop(context);
+        //     }
+        //   },
+        // ),
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(
+        //       _isSearching ? Icons.close : Icons.search,
+        //       color: Colors.white,
+        //     ),
+        //     onPressed: _toggleSearch,
+        //   ),
+        //   IconButton(
+        //     icon: Icon(Icons.refresh),
+        //     onPressed: _fetchOrders,
+        //     color: Colors.white,
+        //   ),
+        // ],
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
         ),
@@ -312,323 +311,333 @@ class _AdminOrdersPageState extends State<AdminOrdersPage>
       );
     }
 
-    return ListView.builder(
-      itemCount: filteredOrders.length,
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      itemBuilder: (context, index) {
-        final order = filteredOrders[index];
+    return RefreshIndicator(
+      onRefresh: () async {
+        await _fetchOrders();
+      },
+      color: accentColor,
+      backgroundColor: Colors.white,
+      strokeWidth: 3,
+      displacement: 50,
+      child: ListView.builder(
+        itemCount: filteredOrders.length,
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        itemBuilder: (context, index) {
+          final order = filteredOrders[index];
 
-        // Determine status color and icon
-        Color statusColor;
-        IconData statusIcon;
-        String statusText;
+          // Determine status color and icon
+          Color statusColor;
+          IconData statusIcon;
+          String statusText;
 
-        switch (order.status) {
-          case STATUS_PENDING:
-            statusColor = Color(0xFFF39C12); // Orange
-            statusIcon = Icons.hourglass_empty;
-            statusText = 'Chờ xác nhận';
-            break;
-          case STATUS_CONFIRMED:
-            statusColor = Color(0xFF3498DB); // Blue
-            statusIcon = Icons.check_circle_outline;
-            statusText = 'Đã xác nhận';
-            break;
-          case STATUS_SHIPPED:
-            statusColor = Color(0xFF9B59B6); // Purple
-            statusIcon = Icons.local_shipping;
-            statusText = 'Đang giao';
-            break;
-          case STATUS_DELIVERED:
-            statusColor = Color(0xFF2ECC71); // Green
-            statusIcon = Icons.check_circle;
-            statusText = 'Đã giao';
-            break;
-          case STATUS_CANCELLED:
-            statusColor = Color(0xFFE74C3C); // Red
-            statusIcon = Icons.cancel;
-            statusText = 'Đã hủy';
-            break;
-          default:
-            statusColor = textSecondaryColor;
-            statusIcon = Icons.help_outline;
-            statusText = 'Không xác định';
-        }
+          switch (order.status) {
+            case STATUS_PENDING:
+              statusColor = Color(0xFFF39C12); // Orange
+              statusIcon = Icons.hourglass_empty;
+              statusText = 'Chờ xác nhận';
+              break;
+            case STATUS_CONFIRMED:
+              statusColor = Color(0xFF3498DB); // Blue
+              statusIcon = Icons.check_circle_outline;
+              statusText = 'Đã xác nhận';
+              break;
+            case STATUS_SHIPPED:
+              statusColor = Color(0xFF9B59B6); // Purple
+              statusIcon = Icons.local_shipping;
+              statusText = 'Đang giao';
+              break;
+            case STATUS_DELIVERED:
+              statusColor = Color(0xFF2ECC71); // Green
+              statusIcon = Icons.check_circle;
+              statusText = 'Đã giao';
+              break;
+            case STATUS_CANCELLED:
+              statusColor = Color(0xFFE74C3C); // Red
+              statusIcon = Icons.cancel;
+              statusText = 'Đã hủy';
+              break;
+            default:
+              statusColor = textSecondaryColor;
+              statusIcon = Icons.help_outline;
+              statusText = 'Không xác định';
+          }
 
-        return Card(
-          margin: EdgeInsets.only(bottom: 16),
-          elevation: 2,
-          shadowColor: Colors.black.withOpacity(0.1),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Column(
-              children: [
-                // Status bar at top
-                Container(
-                  color: statusColor.withOpacity(0.1),
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  child: Row(
-                    children: [
-                      Icon(statusIcon, size: 16, color: statusColor),
-                      SizedBox(width: 6),
-                      Text(
-                        statusText,
-                        style: TextStyle(
-                          color: statusColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Spacer(),
-                      Text(
-                        DateFormat('dd/MM/yyyy').format(order.createdAt),
-                        style: TextStyle(
-                          color: textSecondaryColor,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Main content
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Order ID and quantity
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.qr_code,
-                                size: 16,
-                                color: Color(0xFF1A237E),
-                              ),
-                              SizedBox(width: 6),
-                              Text(
-                                'ID: ${order.id.substring(0, min(8, order.id.length))}...',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                  color: Color(0xFF1A237E),
-                                ),
-                              ),
-                            ],
+          return Card(
+            margin: EdgeInsets.only(bottom: 16),
+            elevation: 2,
+            shadowColor: Colors.black.withOpacity(0.1),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Column(
+                children: [
+                  // Status bar at top
+                  Container(
+                    color: statusColor.withOpacity(0.1),
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    child: Row(
+                      children: [
+                        Icon(statusIcon, size: 16, color: statusColor),
+                        SizedBox(width: 6),
+                        Text(
+                          statusText,
+                          style: TextStyle(
+                            color: statusColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
                           ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Color(0xFF1A237E).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
+                        ),
+                        Spacer(),
+                        Text(
+                          DateFormat('dd/MM/yyyy').format(order.createdAt),
+                          style: TextStyle(
+                            color: textSecondaryColor,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Main content
+                  Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Order ID and quantity
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
                               children: [
                                 Icon(
-                                  Icons.shopping_bag_outlined,
-                                  size: 14,
+                                  Icons.qr_code,
+                                  size: 16,
                                   color: Color(0xFF1A237E),
                                 ),
-                                SizedBox(width: 4),
+                                SizedBox(width: 6),
                                 Text(
-                                  '${order.quantity} sản phẩm',
+                                  'ID: ${order.id.substring(0, min(8, order.id.length))}...',
                                   style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
                                     color: Color(0xFF1A237E),
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: 16),
-
-                      // Customer info
-                      Row(
-                        children: [
-                          Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              color: Color(0xFF1A237E).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(18),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Color(0xFF1A237E).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.shopping_bag_outlined,
+                                    size: 14,
+                                    color: Color(0xFF1A237E),
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    '${order.quantity} sản phẩm',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFF1A237E),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            child: Icon(
-                              Icons.person_outline,
-                              size: 20,
-                              color: Color(0xFF1A237E),
+                          ],
+                        ),
+
+                        SizedBox(height: 16),
+
+                        // Customer info
+                        Row(
+                          children: [
+                            Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: Color(0xFF1A237E).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              child: Icon(
+                                Icons.person_outline,
+                                size: 20,
+                                color: Color(0xFF1A237E),
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    order.user.fullname,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: textPrimaryColor,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: 2),
+                                  Text(
+                                    order.user.email,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: textSecondaryColor,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 16),
+
+                        // Product info
+                        Row(
+                          children: [
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: backgroundColor,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                Icons.devices_other,
+                                color: textSecondaryColor,
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    order.campaign.product.name,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15,
+                                      color: textPrimaryColor,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    order.campaign.name,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: textSecondaryColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 16),
+
+                        // Divider
+                        Divider(height: 1, color: Colors.grey.withOpacity(0.2)),
+
+                        SizedBox(height: 16),
+
+                        // Total amount and actions
+                        Row(
+                          children: [
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  order.user.fullname,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                    color: textPrimaryColor,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                SizedBox(height: 2),
-                                Text(
-                                  order.user.email,
+                                  'Tổng tiền:',
                                   style: TextStyle(
                                     fontSize: 13,
                                     color: textSecondaryColor,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: 16),
-
-                      // Product info
-                      Row(
-                        children: [
-                          Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: backgroundColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              Icons.devices_other,
-                              color: textSecondaryColor,
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  order.campaign.product.name,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15,
-                                    color: textPrimaryColor,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 SizedBox(height: 4),
                                 Text(
-                                  order.campaign.name,
+                                  currencyFormatter.format(order.totalAmount),
                                   style: TextStyle(
-                                    fontSize: 13,
-                                    color: textSecondaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: Color(0xFF1A237E),
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: 16),
-
-                      // Divider
-                      Divider(height: 1, color: Colors.grey.withOpacity(0.2)),
-
-                      SizedBox(height: 16),
-
-                      // Total amount and actions
-                      Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Tổng tiền:',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: textSecondaryColor,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                currencyFormatter.format(order.totalAmount),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Color(0xFF1A237E),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Spacer(),
-                          TextButton(
-                            onPressed: () async {
-                              // Use await to get the result from OrderDetailsPage
-                              final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) =>
-                                          OrderDetailsPage(order: order),
-                                ),
-                              );
-
-                              // Check if we got a deletion result back
-                              if (result is Map && result['deleted'] == true) {
-                                // Show success message in this screen
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      result['message'] ??
-                                          'Đơn hàng đã được xóa thành công',
-                                    ),
-                                    backgroundColor: Colors.green,
-                                    behavior: SnackBarBehavior.floating,
+                            Spacer(),
+                            TextButton(
+                              onPressed: () async {
+                                // Use await to get the result from OrderDetailsPage
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) =>
+                                            OrderDetailsPage(order: order),
                                   ),
                                 );
 
-                                // Refresh the order list
-                                _fetchOrders();
-                              }
-                            },
-                            style: TextButton.styleFrom(
-                              foregroundColor: Color(0xFF1A237E),
-                              padding: EdgeInsets.symmetric(horizontal: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                side: BorderSide(
-                                  color: Color(0xFF1A237E).withOpacity(0.3),
+                                // Check if we got a deletion result back
+                                if (result is Map &&
+                                    result['deleted'] == true) {
+                                  // Show success message in this screen
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        result['message'] ??
+                                            'Đơn hàng đã được xóa thành công',
+                                      ),
+                                      backgroundColor: Colors.green,
+                                      behavior: SnackBarBehavior.floating,
+                                    ),
+                                  );
+
+                                  // Refresh the order list
+                                  _fetchOrders();
+                                }
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: Color(0xFF1A237E),
+                                padding: EdgeInsets.symmetric(horizontal: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  side: BorderSide(
+                                    color: Color(0xFF1A237E).withOpacity(0.3),
+                                  ),
                                 ),
                               ),
+                              child: Text('Chi tiết'),
                             ),
-                            child: Text('Chi tiết'),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
