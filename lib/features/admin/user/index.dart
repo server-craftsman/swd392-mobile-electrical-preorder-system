@@ -123,18 +123,22 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
       appBar: AppBar(
         title: Text(
           'Quản lý khách hàng',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+          ),
         ),
-        backgroundColor: primaryColor,
         elevation: 0,
+        backgroundColor: primaryColor,
+        iconTheme: IconThemeData(color: Colors.white),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, size: 20),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         actions: [
-          // Add new staff button
           IconButton(
             icon: Icon(Icons.person_add, color: Colors.white),
             onPressed: () {
@@ -142,7 +146,6 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
                 context,
                 MaterialPageRoute(builder: (context) => StaffSignUpPage()),
               ).then((result) {
-                // Refresh the list if a new staff was added
                 if (result is Map && result['success'] == true) {
                   _fetchUsers();
                 }
@@ -191,6 +194,9 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
             ),
           ),
         ],
+        // shape: RoundedRectangleBorder(
+        //   borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+        // ),
       ),
       body: Column(
         children: [
@@ -221,26 +227,6 @@ class _CustomerManagePageState extends State<CustomerManagePage> {
                     ),
                   ),
                   Spacer(),
-                  // Container(
-                  //   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.white.withOpacity(0.2),
-                  //     borderRadius: BorderRadius.circular(20),
-                  //   ),
-                  //   child: Row(
-                  //     children: [
-                  //       Icon(Icons.people, color: Colors.white, size: 18),
-                  //       SizedBox(width: 8),
-                  //       Text(
-                  //         'Tổng: ${_totalElements} khách hàng',
-                  //         style: TextStyle(
-                  //           color: Colors.white,
-                  //           fontWeight: FontWeight.w500,
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                 ],
               ),
             ),

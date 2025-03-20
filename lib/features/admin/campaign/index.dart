@@ -20,8 +20,8 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
   bool _isSearching = false;
 
   // Luxury color palette
-  final Color _primaryColor = Color(0xFF1E2A38); // Deep navy blue
-  final Color _accentColor = Color(0xFFE0A458); // Gold accent
+  final Color _primaryColor = Color(0xFF1A237E); // Deep navy blue
+  final Color _accentColor = Color(0xFF7986CB); // Gold accent
   final Color _backgroundColor = Color(0xFFF5F7FA); // Light background
   final Color _cardColor = Colors.white;
   final Color _textColor = Color(0xFF2D3748); // Dark text
@@ -388,18 +388,21 @@ class _ManageCampaignPageState extends State<ManageCampaignPage>
                       final startDate = campaign.startDate;
                       final endDate = campaign.endDate;
 
-                      if (campaign.status == 'CANCELED') {
+                      if (campaign.status == 'CANCELLED') {
                         statusText = 'Đã hủy';
                         statusColor = _canceledColor;
-                      } else if (endDate != null && endDate.isBefore(now)) {
+                      } else if (campaign.status == 'COMPLETED') {
                         statusText = 'Đã hoàn thành';
                         statusColor = _completedColor;
-                      } else if (startDate != null && startDate.isBefore(now)) {
+                      } else if (campaign.status == 'ACTIVE') {
                         statusText = 'Đang hoạt động';
                         statusColor = _activeColor;
-                      } else {
+                      } else if (campaign.status == 'SCHEDULED') {
                         statusText = 'Sắp diễn ra';
                         statusColor = _scheduledColor;
+                      } else {
+                        statusText = 'Không xác định';
+                        statusColor = _secondaryTextColor;
                       }
 
                       return Container(

@@ -80,4 +80,21 @@ class CampaignNetwork {
       throw Exception('Failed to cancel campaign: $e');
     }
   }
+
+  // Add this method to your CampaignNetwork class
+  static Future<void> updateCampaign(UpdateCampaignRequest request) async {
+    try {
+      print('Updating campaign with data: ${request.toJson()}');
+      final response = await ApiClient().put(
+        '/campaigns/${request.id}',
+        data: request.toJson(),
+      );
+      print('Campaign updated successfully: ${response.statusCode}');
+    } catch (e) {
+      print('Error in updateCampaign API call: $e');
+
+      // Rethrow to allow handling in the UI
+      throw e;
+    }
+  }
 }
