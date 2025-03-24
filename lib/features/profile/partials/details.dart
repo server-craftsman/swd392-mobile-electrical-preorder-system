@@ -3,6 +3,7 @@ import 'package:mobile_electrical_preorder_system/core/middleware/token_middlewa
 import 'package:mobile_electrical_preorder_system/core/network/user/user_network.dart';
 import 'package:mobile_electrical_preorder_system/core/network/user/res/index.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile_electrical_preorder_system/features/profile/partials/update.dart';
 
 class UserProfileDetailsPage extends StatefulWidget {
   final String? userId;
@@ -73,6 +74,29 @@ class _UserProfileDetailsPageState extends State<UserProfileDetailsPage> {
     }
   }
 
+  Future<void> _navigateToUpdateProfile() async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder:
+            (context) => UserProfileUpdatePage(
+              userId: widget.userId,
+              user: _user,
+              onProfileUpdated: () {
+                // This will be called when the profile is updated
+                if (mounted) {
+                  _loadUserDetails();
+                }
+              },
+            ),
+      ),
+    );
+
+    // If result is true, it means profile was updated
+    if (result == true) {
+      _loadUserDetails();
+    }
+  }
+
   String _formatDate(DateTime date) {
     return DateFormat('dd/MM/yyyy').format(date);
   }
@@ -127,6 +151,14 @@ class _UserProfileDetailsPageState extends State<UserProfileDetailsPage> {
         backgroundColor: Color(0xFF1A237E),
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.white),
+        actions: [
+          if (_user != null)
+            IconButton(
+              icon: Icon(Icons.edit, color: Colors.white),
+              onPressed: _navigateToUpdateProfile,
+              tooltip: 'Cập nhật thông tin',
+            ),
+        ],
       ),
       body: SafeArea(
         child: RefreshIndicator(
