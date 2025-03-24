@@ -683,4 +683,91 @@ class UserNetwork {
       'errorCode': response.statusCode,
     };
   }
+
+  // Add method to change user password
+  Future<Map<String, dynamic>> changePassword({
+    required String userId,
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      // Validate inputs
+      if (userId.isEmpty) {
+        return {'success': false, 'message': 'ID người dùng không hợp lệ'};
+      }
+
+      if (currentPassword.isEmpty) {
+        return {
+          'success': false,
+          'message': 'Mật khẩu hiện tại không được để trống',
+        };
+      }
+
+      if (newPassword.isEmpty) {
+        return {
+          'success': false,
+          'message': 'Mật khẩu mới không được để trống',
+        };
+      }
+
+      // Create request data
+      final data = {
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+      };
+
+      // Make the API call to change password
+      final response = await _apiClient.put(
+        '/users/$userId/password',
+        data: data,
+      );
+
+      // Process the response
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return {
+          'success': true,
+          'message': 'Mật khẩu đã được thay đổi thành công',
+        };
+      } else {
+        // This will likely not be reached due to Dio's default error handling
+        return {
+          'success': false,
+          'message':
+              'Không thể thay đổi mật khẩu. Mã lỗi: ${response.statusCode}',
+        };
+      }
+    } catch (e) {
+      print('Error changing password: $e');
+
+      // Handle specific error cases
+      String errorMessage = 'Có lỗi xảy ra khi thay đổi mật khẩu';
+
+      if (e is DioException) {
+        final dioError = e;
+
+        // Handle unauthorized (wrong current password)
+        if (dioError.response?.statusCode == 401) {
+          errorMessage = 'Mật khẩu hiện tại không chính xác';
+        }
+        // Handle bad request (validation errors)
+        else if (dioError.response?.statusCode == 400) {
+          errorMessage = 'Mật khẩu mới không hợp lệ';
+
+          // Try to extract more specific error message from response
+          if (dioError.response?.data is Map) {
+            final errorData = dioError.response?.data as Map;
+            if (errorData.containsKey('message')) {
+              errorMessage = errorData['message'];
+            }
+          }
+        }
+        // Handle server errors
+        else if (dioError.response?.statusCode == 500) {
+          errorMessage = 'Lỗi máy chủ, vui lòng thử lại sau';
+        }
+      }
+
+      return {'success': false, 'message': errorMessage};
+    }
+  }
 }

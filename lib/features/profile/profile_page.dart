@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile_electrical_preorder_system/core/network/user/user_network.dart';
 import 'package:mobile_electrical_preorder_system/core/network/user/res/index.dart';
 import 'package:mobile_electrical_preorder_system/features/profile/partials/details.dart';
+import 'package:mobile_electrical_preorder_system/features/profile/partials/change_password.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -282,6 +283,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                     color: Color(0xFF1A237E),
                                   ),
                                   _buildProfileOption(
+                                    icon: Icons.lock,
+                                    title: 'Đổi mật khẩu',
+                                    color: Color(0xFF1A237E),
+                                  ),
+                                  _buildProfileOption(
                                     icon: Icons.logout,
                                     title: 'Đăng xuất',
                                     color: Colors.redAccent,
@@ -350,6 +356,26 @@ class _ProfilePageState extends State<ProfilePage> {
                 builder: (context) => UserProfileDetailsPage(userId: userId),
               ),
             );
+          } else if (title == 'Đổi mật khẩu') {
+            // Lấy userId từ userData hoặc _currentUser
+            String? userId = _currentUser?.id ?? userData?['id'];
+
+            if (userId != null) {
+              // Điều hướng đến trang đổi mật khẩu
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChangePasswordPage(userId: userId),
+                ),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Không thể xác định người dùng'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
           }
           // Handle other options
         },
