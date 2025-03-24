@@ -11,6 +11,8 @@ import 'package:mobile_electrical_preorder_system/features/admin/campaign/index.
 import 'package:mobile_electrical_preorder_system/features/admin/user/index.dart';
 import 'package:mobile_electrical_preorder_system/features/admin/order/index.dart';
 import 'package:mobile_electrical_preorder_system/features/profile/profile_page.dart';
+import 'package:mobile_electrical_preorder_system/features/notification_page/index.dart';
+import 'package:mobile_electrical_preorder_system/core/network/notification/notification.network.dart';
 
 class AdminLayout extends StatefulWidget {
   @override
@@ -182,9 +184,48 @@ class _AdminLayoutState extends State<AdminLayout> {
       ),
       actions: [
         IconButton(
-          icon: Icon(Icons.notifications_outlined, color: Color(0xFF1A237E)),
+          icon: Stack(
+            children: [
+              Icon(Icons.notifications_outlined, color: Color(0xFF1A237E)),
+              Positioned(
+                right: 0,
+                top: 0,
+                child: FutureBuilder<int>(
+                  future: _getUnreadNotificationsCount(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && snapshot.data! > 0) {
+                      return Container(
+                        padding: EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14,
+                        ),
+                        child: Text(
+                          snapshot.data! > 9 ? '9+' : '${snapshot.data}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    }
+                    return SizedBox();
+                  },
+                ),
+              ),
+            ],
+          ),
           onPressed: () {
-            // Handle notifications
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => NotificationPage()),
+            );
           },
         ),
         _buildPopupMenu(),
@@ -290,6 +331,18 @@ class _AdminLayoutState extends State<AdminLayout> {
       return nameParts.first[0].toUpperCase() + nameParts.last[0].toUpperCase();
     } else {
       return nameParts.first[0].toUpperCase();
+    }
+  }
+
+  Future<int> _getUnreadNotificationsCount() async {
+    if (_userId.isEmpty) return 0;
+
+    try {
+      final NotificationNetwork notificationNetwork = NotificationNetwork();
+      return await notificationNetwork.getUnreadNotificationCount(_userId);
+    } catch (e) {
+      print('Error getting unread notification count: $e');
+      return 0;
     }
   }
 }

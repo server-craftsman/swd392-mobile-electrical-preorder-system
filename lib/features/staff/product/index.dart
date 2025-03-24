@@ -5,6 +5,7 @@ import 'partials/create.dart';
 import 'partials/details.dart';
 import 'partials/update.dart';
 import 'partials/delete.dart';
+import 'dart:async';
 
 class ProductManagementPage extends StatefulWidget {
   @override
@@ -19,11 +20,15 @@ class _ProductManagementPageState extends State<ProductManagementPage>
 
   List<Map<String, dynamic>> _fetchedProducts = [];
   bool _isLoading = true;
+  bool _isSearching = false;
   String _errorMessage = '';
 
   // Multi-select related variables
   bool _isMultiSelectMode = false;
   Set<String> _selectedProductIds = {};
+
+  // Add this variable to your class
+  bool _isDisposed = false;
 
   @override
   void initState() {
@@ -33,12 +38,20 @@ class _ProductManagementPageState extends State<ProductManagementPage>
   }
 
   void _fetchProducts() async {
+    if (!mounted) return;
+
     setState(() {
       _isLoading = true;
       _errorMessage = '';
     });
+
     try {
-      final response = await ProductNetwork.getProductList();
+      final response = await ProductNetwork.getProductList(
+        query: _searchQuery.isEmpty ? null : _searchQuery,
+      );
+
+      if (!mounted) return; // Check again after async operation
+
       setState(() {
         _fetchedProducts =
             response.data.content
@@ -48,8 +61,7 @@ class _ProductManagementPageState extends State<ProductManagementPage>
                     'productCode': product.productCode,
                     'name': product.name,
                     'price': product.price.toString(),
-                    'stock':
-                        product.quantity, // Add stock field for compatibility
+                    'stock': product.quantity,
                     'quantity': product.quantity,
                     'status':
                         product.status == 'AVAILABLE' ? 'Còn hàng' : 'Hết hàng',
@@ -59,17 +71,17 @@ class _ProductManagementPageState extends State<ProductManagementPage>
                             : 'assets/images/default.jpg',
                     'category': product.category.name,
                     'description': product.description ?? '',
-                    'rating': 0.0, // Default value
-                    'reviews': 0, // Default value
+                    'rating': 0.0,
+                    'reviews': 0,
                   },
                 )
                 .toList();
         _isLoading = false;
-
-        // Clear selections when products are refreshed
         _selectedProductIds.clear();
       });
     } catch (e) {
+      if (!mounted) return; // Check before setting state after error
+
       setState(() {
         _errorMessage = 'Failed to load products: $e';
         _isLoading = false;
@@ -79,6 +91,7 @@ class _ProductManagementPageState extends State<ProductManagementPage>
 
   @override
   void dispose() {
+    _isDisposed = true;
     _tabController.dispose();
     _searchController.dispose();
     super.dispose();
@@ -98,31 +111,12 @@ class _ProductManagementPageState extends State<ProductManagementPage>
   }
 
   List<Map<String, dynamic>> _getFilteredProducts(String category) {
-    final products = _fetchedProducts;
+    // Since we're using server-side search, we just need to filter by category here
     if (category == 'Tất cả') {
-      return products
-          .where(
-            (product) =>
-                product['name'].toLowerCase().contains(
-                  _searchQuery.toLowerCase(),
-                ) ||
-                product['id'].toLowerCase().contains(
-                  _searchQuery.toLowerCase(),
-                ),
-          )
-          .toList();
+      return _fetchedProducts;
     }
-    return products
-        .where(
-          (product) =>
-              product['category'] == category &&
-              (product['name'].toLowerCase().contains(
-                    _searchQuery.toLowerCase(),
-                  ) ||
-                  product['id'].toLowerCase().contains(
-                    _searchQuery.toLowerCase(),
-                  )),
-        )
+    return _fetchedProducts
+        .where((product) => product['category'] == category)
         .toList();
   }
 
@@ -188,7 +182,7 @@ class _ProductManagementPageState extends State<ProductManagementPage>
           ),
     );
 
-    if (confirmed != true) return;
+    if (confirmed != true || !mounted) return;
 
     // Show loading indicator
     showDialog(
@@ -202,6 +196,8 @@ class _ProductManagementPageState extends State<ProductManagementPage>
       final result = await ProductNetwork.deleteMultipleProducts(
         _selectedProductIds.toList(),
       );
+
+      if (!mounted) return;
 
       // Hide loading indicator
       Navigator.pop(context);
@@ -221,6 +217,8 @@ class _ProductManagementPageState extends State<ProductManagementPage>
       });
       _fetchProducts();
     } catch (e) {
+      if (!mounted) return;
+
       // Hide loading indicator
       Navigator.pop(context);
 
@@ -239,7 +237,7 @@ class _ProductManagementPageState extends State<ProductManagementPage>
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body:
-          _isLoading
+          _isLoading // Only show the full loading screen for initial load
               ? Center(child: CircularProgressIndicator())
               : _errorMessage.isNotEmpty
               ? Center(child: Text(_errorMessage))
@@ -361,44 +359,92 @@ class _ProductManagementPageState extends State<ProductManagementPage>
   Widget _buildSearchBar() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: TextField(
-        controller: _searchController,
-        onChanged: (value) {
-          setState(() {
-            _searchQuery = value;
-          });
-        },
-        decoration: InputDecoration(
-          hintText: 'Tìm kiếm sản phẩm...',
-          prefixIcon: Icon(Icons.search, color: Color(0xFF1A237E)),
-          suffixIcon:
-              _searchQuery.isNotEmpty
-                  ? IconButton(
-                    icon: Icon(Icons.clear),
-                    onPressed: () {
-                      setState(() {
-                        _searchController.clear();
-                        _searchQuery = '';
-                      });
-                    },
-                  )
-                  : null,
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+              onSubmitted: (value) {
+                if (value.trim().isNotEmpty) {
+                  setState(() {
+                    _isSearching = true;
+                    _searchQuery = value.trim(); // Ensure query is trimmed
+                  });
+                  _fetchProductsForSearch();
+                }
+              },
+              decoration: InputDecoration(
+                hintText: 'Tìm kiếm sản phẩm theo tên hoặc mã...',
+                prefixIcon: Icon(Icons.search, color: Color(0xFF1A237E)),
+                suffixIcon:
+                    _searchQuery.isNotEmpty
+                        ? IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: () {
+                            setState(() {
+                              _searchController.clear();
+                              _searchQuery = '';
+                              _isSearching = true;
+                            });
+                            _fetchProductsForSearch(); // Reset search
+                          },
+                        )
+                        : null,
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Color(0xFF1A237E), width: 1.5),
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: 0),
+              ),
+            ),
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Color(0xFF1A237E), width: 1.5),
-          ),
-          contentPadding: EdgeInsets.symmetric(vertical: 0),
-        ),
+          // Add search button
+          SizedBox(width: 10),
+          _isSearching
+              ? Container(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1A237E)),
+                ),
+              )
+              : ElevatedButton(
+                onPressed: () {
+                  if (_searchQuery.trim().isNotEmpty) {
+                    setState(() {
+                      _isSearching = true;
+                      _searchQuery =
+                          _searchQuery.trim(); // Ensure query is trimmed
+                    });
+                    _fetchProductsForSearch();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF1A237E),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text('Tìm kiếm', style: TextStyle(color: Colors.white)),
+              ),
+        ],
       ),
     );
   }
@@ -434,6 +480,25 @@ class _ProductManagementPageState extends State<ProductManagementPage>
   }
 
   Widget _buildProductGrid(String category) {
+    // If we're in a search operation, show a loading indicator in the grid
+    if (_isSearching) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1A237E)),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Đang tìm kiếm sản phẩm...',
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
+          ],
+        ),
+      );
+    }
+
     final filteredProducts = _getFilteredProducts(category);
 
     if (filteredProducts.isEmpty) {
@@ -668,10 +733,17 @@ class _ProductManagementPageState extends State<ProductManagementPage>
 
   // Action methods using the partial components
   void _showAddProductDialog() {
-    CreateProductDialog.show(context, _fetchProducts);
+    if (!mounted) return;
+    // Wrap in a check to ensure widget is still mounted when returning from dialog
+    CreateProductDialog.show(context, () {
+      if (mounted && !_isDisposed) {
+        _fetchProducts();
+      }
+    });
   }
 
   void _showProductDetails(Map<String, dynamic> product) {
+    if (!mounted) return;
     ProductDetailsView.show(
       context,
       product,
@@ -681,11 +753,21 @@ class _ProductManagementPageState extends State<ProductManagementPage>
   }
 
   void _showEditProductDialog(Map<String, dynamic> product) {
-    UpdateProductDialog.show(context, product, _fetchProducts);
+    if (!mounted) return;
+    UpdateProductDialog.show(context, product, () {
+      if (mounted && !_isDisposed) {
+        _fetchProducts();
+      }
+    });
   }
 
   void _showDeleteConfirmation(Map<String, dynamic> product) {
-    DeleteProductDialog.show(context, product, _fetchProducts);
+    if (!mounted) return;
+    DeleteProductDialog.show(context, product, () {
+      if (mounted && !_isDisposed) {
+        _fetchProducts();
+      }
+    });
   }
 
   // Helper methods
@@ -700,6 +782,84 @@ class _ProductManagementPageState extends State<ProductManagementPage>
           );
     } catch (e) {
       return priceStr;
+    }
+  }
+
+  // Modify your search method to check the _isDisposed flag as an extra safeguard
+  void _fetchProductsForSearch() async {
+    if (!mounted || _isDisposed) return;
+
+    setState(() {
+      _errorMessage = '';
+      _isSearching = true;
+    });
+
+    try {
+      print("Searching with query: '${_searchQuery}'");
+
+      final response = await ProductNetwork.getProductList(
+        query: _searchQuery.isEmpty ? null : _searchQuery,
+      );
+
+      // Double-check mounted and disposed state
+      if (!mounted || _isDisposed) return;
+
+      print("Search response received, items: ${response.data.content.length}");
+
+      setState(() {
+        _fetchedProducts =
+            response.data.content
+                .map(
+                  (product) => {
+                    'id': product.id,
+                    'productCode': product.productCode,
+                    'name': product.name,
+                    'price': product.price.toString(),
+                    'stock': product.quantity,
+                    'quantity': product.quantity,
+                    'status':
+                        product.status == 'AVAILABLE' ? 'Còn hàng' : 'Hết hàng',
+                    'imageUrl':
+                        product.imageProducts.isNotEmpty
+                            ? product.imageProducts.first.imageUrl
+                            : 'assets/images/default.jpg',
+                    'category': product.category.name,
+                    'description': product.description ?? '',
+                    'rating': 0.0,
+                    'reviews': 0,
+                  },
+                )
+                .toList();
+        _isSearching = false;
+        _selectedProductIds.clear();
+      });
+
+      // Show a snackbar for zero results
+      if (_fetchedProducts.isEmpty && _searchQuery.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Không tìm thấy sản phẩm nào phù hợp với "$_searchQuery"',
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted || _isDisposed) return;
+
+      setState(() {
+        _errorMessage = 'Failed to load products: $e';
+        _isSearching = false;
+      });
+
+      // Show error snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Lỗi tìm kiếm: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 }

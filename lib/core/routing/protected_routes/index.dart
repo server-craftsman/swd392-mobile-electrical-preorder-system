@@ -28,5 +28,5 @@ List<GoRoute> staffRoutes = createStaffProtectedRoutes([
   {'path': '/staff/overview', 'page': OverviewPage()},
   {'path': '/staff/statistic', 'page': StatisticPage()},
   {'path': '/staff/product', 'page': ProductManagementPage()},
-  {'path': '/staff/orders', 'page': ManagerOrdersPage()},
+  {'path': '/staff/orders', 'page': StaffOrdersPage()},
 ]);
