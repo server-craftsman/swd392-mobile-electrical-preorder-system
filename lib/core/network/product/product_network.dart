@@ -23,13 +23,30 @@ class ProductNetwork {
   static CancelToken _cancelToken = CancelToken();
 
   /// Get list of products with optimized parsing
-  static Future<ProductResponse> getProductList() async {
+  static Future<ProductResponse> getProductList({
+    String? query,
+    String? sortDirection,
+  }) async {
     try {
       final apiClient = ApiClient();
+
+      // Build query parameters
+      Map<String, dynamic> queryParams = {};
+
+      // Add search query if provided
+      if (query != null && query.isNotEmpty) {
+        queryParams['search'] = query;
+      }
+
+      // Add sort direction if provided
+      if (sortDirection != null) {
+        queryParams['sort'] = sortDirection;
+      }
 
       // Use cancellable token to allow aborting requests
       final response = await apiClient.get(
         '/products',
+        queryParameters: queryParams,
         cancelToken: _cancelToken,
       );
 
